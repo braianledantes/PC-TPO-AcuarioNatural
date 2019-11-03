@@ -1,5 +1,3 @@
-package actividades;
-
 import actividades.*;
 
 /**
@@ -24,7 +22,7 @@ public class Parque implements Actividad {
     public static final int HORA_INICIO_INGRESO = 9;
     public static final int HORA_FIN_INGRESO = 17;
     public static final int HORA_CIERRE = 18;
-    private Actividad snorkel, faroTobogan, shop, carreraGomones, nadoDelfines;
+    private FaroMirador faroMirador;
 
     public Parque(int molinetes, int hCierre) {
         this.molinetes = molinetes;
@@ -33,10 +31,7 @@ public class Parque implements Actividad {
         for (int i = 0; i < restaurantes.length; i++) {
             restaurantes[i] = new Restaurante(2 + (i * 3));
         }
-        snorkel = new Snorkel();
-        shop = new Tienda();
-        carreraGomones = new CarreraGomones();
-        nadoDelfines = new NadoDelfines();
+        faroMirador = new FaroMirador(10);
     }
 
     public void abrir() {
@@ -56,6 +51,14 @@ public class Parque implements Actividad {
         if (restaurantes[r].isAbierto())
             restaurante = restaurantes[r];
         return restaurante;
+    }
+
+    public FaroMirador entrarAlFaroMirador() {
+        FaroMirador retorno = null;
+        if (faroMirador.isAbierto()) {
+            retorno = faroMirador;
+        }
+        return retorno;
     }
 
     @Override

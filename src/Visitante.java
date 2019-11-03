@@ -1,4 +1,4 @@
-import actividades.Parque;
+import actividades.FaroMirador;
 import actividades.Restaurante;
 import hilos.Reloj;
 
@@ -23,10 +23,21 @@ public class Visitante implements Runnable {
 //                almorzar();
 //                siguienteRestaurante();
 //                merendar();
+                visitarFaroMirador();
 
                 parque.salir();
             }
             volverAlOtroDia();
+        }
+    }
+
+    void visitarFaroMirador() {
+        FaroMirador faroMirador = parque.entrarAlFaroMirador();
+        if (faroMirador != null) {
+            faroMirador.subir();
+            faroMirador.adminarVista();
+            faroMirador.desenderPorTobogan();
+            faroMirador.salir();
         }
     }
 

@@ -3,7 +3,7 @@ package actividades;
 import java.util.concurrent.Semaphore;
 
 /**
- * Restaurante: en el pago del acceso al actividades.Parque se encuentra incluido el almuerzo y la merienda.
+ * Restaurante: en el pago del acceso al Parque se encuentra incluido el almuerzo y la merienda.
  * Existen tres restaurantes, pero solamente se puede consumir un almuerzo y una merienda en
  * cualquiera de ellos. Puede tomar el almuerzo en un restaurante y la merienda en otro. Los restaurantes
  * tienen capacidad limitada. Las personas son atendidas en orden de llegada. Los restaurantes tienen

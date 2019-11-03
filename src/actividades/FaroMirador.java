@@ -1,7 +1,7 @@
 package actividades;
 
-import hilos.AdminFaroMirador;
 import hilos.Reloj;
+
 import java.util.concurrent.Semaphore;
 
 /**
@@ -17,17 +17,16 @@ import java.util.concurrent.Semaphore;
 public class FaroMirador implements Actividad {
     private boolean abierto;
     private Semaphore escalera;
-    private Semaphore tobogan1, tobogan2;
-    private int capacidadEscalera;
-    private Thread admin;
+    private Semaphore toboganes, mirador;
+    private int capacidadEscalera, cantToboganes;
 
     public FaroMirador(int capacidadEscalera) {
         this.abierto = false;
+        this.cantToboganes = 2;
         this.capacidadEscalera = capacidadEscalera;
         escalera = new Semaphore(capacidadEscalera, true);
-        tobogan1 = new Semaphore(1);
-        tobogan1 = new Semaphore(1);
-        admin = new Thread(new AdminFaroMirador(tobogan1, tobogan2), "AdminFaroFirador");
+        toboganes = new Semaphore(cantToboganes, true);
+        mirador = new Semaphore(cantToboganes / 2);
     }
 
     @Override
@@ -38,12 +37,15 @@ public class FaroMirador implements Actividad {
     @Override
     public boolean entrar() {
         // TODO terminar metodo entrar()
-        try {
-            escalera.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        boolean pudoEntrar = abierto;
+        if (pudoEntrar) {
+            try {
+                escalera.acquire();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-        return true;
+        return pudoEntrar;
     }
 
     public void subir() {
@@ -51,7 +53,7 @@ public class FaroMirador implements Actividad {
         try {
             escalera.acquire();
             System.out.println(Thread.currentThread().getName() + " subiendo escalera");
-            Reloj.dormirHilo(2,5);
+            Reloj.dormirHilo(2, 5);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -59,22 +61,30 @@ public class FaroMirador implements Actividad {
 
     public void adminarVista() {
         // TODO terminar metodo adminarVista()
-        System.out.println(Thread.currentThread().getName() + " admirando vista desde faro");
-        Reloj.dormirHilo(2,5);
+        try {
+            mirador.acquire();
+            escalera.release();
+            System.out.println(Thread.currentThread().getName() + " admirando vista desde faro");
+            Reloj.dormirHilo(2, 5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void desenderPorTobogan() {
         // TODO terminar metodo desenderPorTobogan()
-        escalera.release();
-    }
-
-    public void avisarAdmin() {
-        // TODO implementar metodo avisarAdmin()
+        try {
+            toboganes.acquire();
+            mirador.release();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void salir() {
         // TODO implementar metodo salir()
+        toboganes.release();
     }
 
     @Override

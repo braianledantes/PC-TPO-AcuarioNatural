@@ -1,4 +1,3 @@
-import actividades.Parque;
 import hilos.Reloj;
 
 public class Main {
