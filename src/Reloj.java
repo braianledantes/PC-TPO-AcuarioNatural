@@ -7,7 +7,7 @@ public class Reloj extends Thread {
     private Parque parque;
 
     private Reloj(Parque parque) {
-        this.hora = 7; // que arranque desde las 7:00 am xq no quiero esperar tanto
+        this.hora = 8; // que arranque desde las 7:00 am xq no quiero esperar tanto
         this.parque = parque;
     }
 
@@ -23,16 +23,17 @@ public class Reloj extends Thread {
     public void run() {
         while (true) {
             try {
-                Thread.sleep(10000);
+                System.out.println("Son a las " + hora);
+                Thread.sleep(10000); // una hora dura 10 segundos
                 incrementarHora();
                 switch (reloj.hora) {
-                    case 9:
+                    case Parque.HORA_INICIO_INGRESO:
                         parque.abrir();
                         break;
-                    case 17:
+                    case Parque.HORA_FIN_INGRESO:
                         parque.cerrarIngreso();
                         break;
-                    case 18:
+                    case Parque.HORA_CIERRE:
                         parque.cerrar();
                         break;
                 }

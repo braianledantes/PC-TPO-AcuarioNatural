@@ -10,10 +10,15 @@ import java.util.concurrent.Semaphore;
  * habilitada una cola de espera.
  */
 public class Restaurante implements Actividad {
-    boolean abierto;
-    Semaphore lugares;
+    private boolean abierto;
+    private Semaphore lugares;
+    public static final int HORA_INICIO_ALMUERZO = 11;
+    public static final int HORA_FIN_ALMUERZO = 13;
+    public static final int HORA_INICIO_MERIENDA = 15;
+    public static final int HORA_FIN_MERIENDA = 17;
 
     public Restaurante(int capacidad) {
+        abierto = false;
         lugares = new Semaphore(capacidad, true);
     }
 

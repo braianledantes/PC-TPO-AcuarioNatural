@@ -1,5 +1,7 @@
 package actividades;
 
+import java.util.concurrent.Semaphore;
+
 /**
  * Faro-Mirador con vista a 40 m de altura y descenso en tobogán: Admira desde lo alto todo el
  * esplendor de una maravilla natural y desciende en tobogán hasta una pileta. Para acceder al tobogán
@@ -10,6 +12,10 @@ package actividades;
  * la pileta, es decir, sobre cada tobogán siempre hay a lo sumo una persona.
  */
 public class FaroMirador implements Actividad {
+    private Semaphore escalera;
+    private Semaphore tobogan1, tobogan2;
+    private int capacidadEscalera;
+
     @Override
     public void abrir() {
 
@@ -18,6 +24,14 @@ public class FaroMirador implements Actividad {
     @Override
     public boolean entrar() {
         return true;
+    }
+
+    public void subir() {
+
+    }
+
+    public void desenderPorTobogan() {
+
     }
 
     @Override

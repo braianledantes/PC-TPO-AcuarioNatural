@@ -23,26 +23,47 @@ public class Visitante implements Runnable {
                 merendar();
                 parque.salir();
             }
-            hacerOtraCosa();
+            volverAlOtroDia();
         }
     }
 
-    public void almorzar() {
-        Restaurante restaurante = parque.entrarAlRestaurante(cualRest);
-        restaurante.almorzar(2);
+    void establecerRecorrido(){
+
     }
 
-    public void siguienteRestaurante() {
+    void almorzar() {
+        Restaurante restaurante = parque.entrarAlRestaurante(cualRest);
+        if (restaurante != null){
+            restaurante.entrar();
+            restaurante.almorzar(2);
+            restaurante.salir();
+        }
+    }
+
+    void siguienteRestaurante() {
         cualRest = (cualRest + 1) % Parque.CANT_RESTUARANTES;
     }
 
-    public void merendar() {
+    void merendar() {
         Restaurante restaurante = parque.entrarAlRestaurante(cualRest);
-        restaurante.merendar(1);
+        if (restaurante != null) {
+            restaurante.entrar();
+            restaurante.merendar(1);
+            restaurante.salir();
+        }
     }
 
-    public void hacerOtraCosa() {
-        Reloj.dormirHilo(3, 5);
-        System.out.println(Thread.currentThread().getName() + " haciendo otra cosa");
+    void volverAlOtroDia() {
+        int horaSalida = Reloj.getHora();
+        int tiempoEspera = 24 - horaSalida + Parque.HORA_INICIO_INGRESO;
+        if (horaSalida < Parque.HORA_INICIO_INGRESO) {
+            tiempoEspera = Parque.HORA_INICIO_INGRESO - horaSalida;
+        }
+        //System.out.println(Thread.currentThread().getName() + " haciendo otra cosa " + horaSalida + " - " + tiempoEspera);
+        try {
+            Thread.sleep(tiempoEspera * 10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -18,6 +18,9 @@ public class Parque implements Actividad {
     private int molinetes, hCierre;
     private Restaurante[] restaurantes;
     public static final int CANT_RESTUARANTES = 3;
+    public static final int HORA_INICIO_INGRESO = 9;
+    public static final int HORA_FIN_INGRESO = 17;
+    public static final int HORA_CIERRE = 18;
     private Actividad snorkel, faroTobogan, shop, carreraGomones, nadoDelfines;
 
     public Parque(int molinetes, int hCierre) {
@@ -25,7 +28,7 @@ public class Parque implements Actividad {
         this.hCierre = hCierre;
         this.restaurantes = new Restaurante[CANT_RESTUARANTES];
         for (int i = 0; i < restaurantes.length; i++) {
-            restaurantes[i] = new Restaurante(10 + (i * 3));
+            restaurantes[i] = new Restaurante(2 + (i * 3));
         }
         snorkel = new Snorkel();
         shop = new Tienda();
@@ -34,7 +37,9 @@ public class Parque implements Actividad {
     }
 
     public void abrir() {
-
+        for (Restaurante r : restaurantes) {
+            r.abrir();
+        }
     }
 
     public boolean entrar() {
@@ -59,6 +64,8 @@ public class Parque implements Actividad {
     }
 
     public void cerrar() {
-
+        for (Restaurante r : restaurantes) {
+            r.cerrar();
+        }
     }
 }
