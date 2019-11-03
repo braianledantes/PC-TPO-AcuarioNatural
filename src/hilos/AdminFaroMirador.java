@@ -4,6 +4,9 @@ import actividades.FaroMirador;
 
 import java.util.concurrent.Semaphore;
 
+/**
+ * TODO ver como hacer la administracion de los visitantes que se quieren tirar por el tobogan, usar BlokingQueue
+ */
 public class AdminFaroMirador implements Runnable {
     private FaroMirador faroMirador;
     private Semaphore tobogan1, tobogan2;
@@ -15,6 +18,6 @@ public class AdminFaroMirador implements Runnable {
 
     @Override
     public void run() {
-
+        // TODO implementar run()
     }
 }

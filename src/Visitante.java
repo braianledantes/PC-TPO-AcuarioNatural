@@ -31,7 +31,7 @@ public class Visitante implements Runnable {
     }
 
     void establecerRecorrido() {
-
+        // TODO implementar metodo establecerRecorrido()
     }
 
     void almorzar() {

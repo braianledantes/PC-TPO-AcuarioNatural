@@ -3,6 +3,7 @@ package actividades;
 import actividades.*;
 
 /**
+ * TODO terminar las otras actividades y terminar el parque
  * Se desea simular el funcionamiento del parque ecológico “ECO-PCS”, un acuario natural, desde que los
  * visitantes llegan al parque hasta que se van.
  * Al parque se puede acceder en forma particular o por tour, en el caso del tour, se trasladan a través de
@@ -39,13 +40,14 @@ public class Parque implements Actividad {
     }
 
     public void abrir() {
+        // TODO terminar las otras actividades
         for (Restaurante r : restaurantes) {
             r.abrir();
         }
     }
 
     public boolean entrar() {
-
+        // TODO implementar
         return true;
     }
 
@@ -58,14 +60,15 @@ public class Parque implements Actividad {
 
     @Override
     public void salir() {
-
+        // TODO implementar
     }
 
     public void cerrarIngreso() {
-
+        // TODO implementar
     }
 
     public void cerrar() {
+        // TODO terminar para las otras actividades
         for (Restaurante r : restaurantes) {
             r.cerrar();
         }

@@ -5,6 +5,7 @@ import hilos.Reloj;
 import java.util.concurrent.Semaphore;
 
 /**
+ * TODO implementar FaroMirador
  * Faro-Mirador con vista a 40 m de altura y descenso en tobogán: Admira desde lo alto to-do el
  * esplendor de una maravilla natural y desciende en tobogán hasta una pileta. Para acceder al tobogán
  * es necesario subir por una escalera caracol, que tiene capacidad para n personas. Al llegar a la cima
@@ -36,6 +37,7 @@ public class FaroMirador implements Actividad {
 
     @Override
     public boolean entrar() {
+        // TODO terminar metodo entrar()
         try {
             escalera.acquire();
         } catch (InterruptedException e) {
@@ -45,6 +47,7 @@ public class FaroMirador implements Actividad {
     }
 
     public void subir() {
+        // TODO terminar metodo subir()
         try {
             escalera.acquire();
             System.out.println(Thread.currentThread().getName() + " subiendo escalera");
@@ -55,25 +58,28 @@ public class FaroMirador implements Actividad {
     }
 
     public void adminarVista() {
+        // TODO terminar metodo adminarVista()
         System.out.println(Thread.currentThread().getName() + " admirando vista desde faro");
         Reloj.dormirHilo(2,5);
     }
 
     public void desenderPorTobogan() {
+        // TODO terminar metodo desenderPorTobogan()
         escalera.release();
     }
 
     public void avisarAdmin() {
-
+        // TODO implementar metodo avisarAdmin()
     }
 
     @Override
     public void salir() {
-
+        // TODO implementar metodo salir()
     }
 
     @Override
     public void cerrar() {
+        // TODO implementar metodo cerrar()
         abierto = false;
     }
 

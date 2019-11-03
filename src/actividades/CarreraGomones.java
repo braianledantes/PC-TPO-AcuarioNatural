@@ -1,6 +1,7 @@
 package actividades;
 
 /**
+ * TODO implementar clase
  * Carrera de gomones por el río : esta actividad permite que los visitantes deciendan por el río, que se
  * encuentra rodeado de manglares, compitiendo entre ellos. Para ello es necesario llegar hasta el inicio
  * de la actividad a través de bicicletas que se prestan en un stand de bicicletas, o a través de un tren
@@ -15,22 +16,23 @@ package actividades;
 public class CarreraGomones implements Actividad {
     @Override
     public void abrir() {
-
+        // TODO implementar metodo abrir()
     }
 
     @Override
     public boolean entrar() {
+        // TODO implementar metodo entrar()
         return true;
     }
 
     @Override
     public void salir() {
-
+        // TODO implementar metodo salir()
     }
 
     @Override
     public void cerrar() {
-
+        // TODO implementar metodo cerrar()
     }
 
     @Override
