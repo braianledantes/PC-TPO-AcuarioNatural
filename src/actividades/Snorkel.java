@@ -27,4 +27,9 @@ public class Snorkel implements Actividad {
     public void cerrar() {
 
     }
+
+    @Override
+    public boolean isAbierto() {
+        return false;
+    }
 }

@@ -1,3 +1,5 @@
+package actividades;
+
 import actividades.*;
 
 /**
@@ -67,5 +69,10 @@ public class Parque implements Actividad {
         for (Restaurante r : restaurantes) {
             r.cerrar();
         }
+    }
+
+    @Override
+    public boolean isAbierto() {
+        return false;
     }
 }

@@ -1,3 +1,6 @@
+package hilos;
+
+import actividades.Parque;
 import java.util.Random;
 
 public class Reloj extends Thread {

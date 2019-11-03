@@ -27,4 +27,9 @@ public class NadoDelfines implements Actividad {
     public void cerrar() {
 
     }
+
+    @Override
+    public boolean isAbierto() {
+        return false;
+    }
 }

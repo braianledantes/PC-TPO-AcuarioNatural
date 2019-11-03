@@ -1,3 +1,6 @@
+import actividades.Parque;
+import hilos.Reloj;
+
 public class Main {
     public static void main(String[] args) {
         int hCierre = 18, molinetes = 4, nVisitantes = 4;

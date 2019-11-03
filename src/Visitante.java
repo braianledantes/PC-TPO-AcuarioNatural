@@ -1,4 +1,6 @@
+import actividades.Parque;
 import actividades.Restaurante;
+import hilos.Reloj;
 
 import java.util.Random;
 
@@ -18,22 +20,23 @@ public class Visitante implements Runnable {
         int[] recorrido = new int[5];
         while (true) {
             if (parque.entrar()) {
-                almorzar();
-                siguienteRestaurante();
-                merendar();
+//                almorzar();
+//                siguienteRestaurante();
+//                merendar();
+
                 parque.salir();
             }
             volverAlOtroDia();
         }
     }
 
-    void establecerRecorrido(){
+    void establecerRecorrido() {
 
     }
 
     void almorzar() {
         Restaurante restaurante = parque.entrarAlRestaurante(cualRest);
-        if (restaurante != null){
+        if (restaurante != null) {
             restaurante.entrar();
             restaurante.almorzar(2);
             restaurante.salir();

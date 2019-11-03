@@ -32,4 +32,9 @@ public class CarreraGomones implements Actividad {
     public void cerrar() {
 
     }
+
+    @Override
+    public boolean isAbierto() {
+        return false;
+    }
 }

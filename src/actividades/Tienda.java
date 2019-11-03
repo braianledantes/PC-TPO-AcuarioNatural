@@ -1,3 +1,5 @@
+package actividades;
+
 import actividades.Actividad;
 
 public class Tienda implements Actividad {
@@ -19,5 +21,10 @@ public class Tienda implements Actividad {
     @Override
     public void cerrar() {
 
+    }
+
+    @Override
+    public boolean isAbierto() {
+        return false;
     }
 }
