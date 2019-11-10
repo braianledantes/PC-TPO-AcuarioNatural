@@ -1,8 +1,8 @@
 package actividades;
 
+import hilos.AdminFaroMirador;
 import hilos.Reloj;
 
-import java.util.Random;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -19,22 +19,29 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class FaroMiradorLocks implements Actividad {
     private boolean abierto;
-    private Tirarse t;
+    private int capacidadEscalera, capacidadCima, quieren_tirarse, queTobogan, subiendo, mirando;
+    private boolean disponibleToboganA, disponibleToboganB;
     private Lock lock;
-    private Condition subir, mirar, tirarse, administrar;
-    private int capacidadEscalera, tirandose, subiendo, mirando, capacidadMirador;
+    private Condition subir, mirar, tirarse, administrar, toboganA, toboganB;
 
     public FaroMiradorLocks(int capacidadEscalera) {
         this.abierto = false;
         this.capacidadEscalera = capacidadEscalera;
-        this.capacidadMirador = capacidadEscalera;
-        this.mirando = 0;
+        capacidadCima = capacidadEscalera + 10;
+        queTobogan = 0;
+        quieren_tirarse = 0;
+        subiendo = 0;
+        mirando = 0;
         lock = new ReentrantLock(true);
         subir = lock.newCondition();
         mirar = lock.newCondition();
         tirarse = lock.newCondition();
         administrar = lock.newCondition();
-        new Thread(new Admin(this)).start();
+        toboganA = lock.newCondition();
+        toboganB = lock.newCondition();
+
+        disponibleToboganA = true;
+        disponibleToboganB = true;
     }
 
     @Override
@@ -43,126 +50,100 @@ public class FaroMiradorLocks implements Actividad {
     }
 
     @Override
-    public void entrar() {
-        // TODO terminar metodo entrar()
+    public void entrar() throws InterruptedException {
         lock.lock();
-        try {
-            while (subiendo == capacidadEscalera) {
-                subir.await();
-            }
-            subiendo++;
-            System.out.println(Thread.currentThread().getName() + " subiendo al faro");
-        } catch (InterruptedException e) {
-        } finally {
-            lock.unlock();
+        while (subiendo == capacidadEscalera) {
+            subir.await();
         }
-        Reloj.dormirHilo(3,4);
-    }
-
-    public void adminarVista() {
-        // TODO terminar metodo adminarVista()
-        lock.lock();
-        try {
-            while (mirando == capacidadMirador) {
-                mirar.await();
-            }
-            subiendo--;
-            mirando++;
-        } catch (InterruptedException e) {
-        } finally {
-            lock.unlock();
-        }
-
-        System.out.println(Thread.currentThread().getName() + " admirando vista desde faro");
-        Reloj.dormirHilo(2, 5);
-    }
-
-    public void desenderPorTobogan() {
-        // TODO ver para que se tiren a distinta velocidad y que cada tobogan sea una condition
-        lock.lock();
-        administrar.signal();
-        Tirarse porDonde;
-        while (Tirarse.ESPERAR == (porDonde = queHago())){
-            try {
-                tirarse.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        if (Tirarse.TOBOGAN_A == porDonde){
-            System.out.println(Thread.currentThread().getName() + " me tiro por el tobogan A");
-        } else if (Tirarse.TOBOGAN_B == porDonde) {
-            System.out.println(Thread.currentThread().getName() + " me tiro por el tobogan B");
-        }
-        tirandose++;
-        mirando--;
+        subiendo++;
         lock.unlock();
-        Reloj.dormirHilo(1,1);
+
+        System.out.println(Thread.currentThread().getName() + " subiendo escalera");
+        Thread.sleep(1000);
     }
 
-    private Tirarse queHago() {
-        return t;
-    }
-
-    public void administrar() {
+    public void admirarVista() throws InterruptedException {
         lock.lock();
-        while (mirando == 0 || tirandose > 2){
-            try {
-                t = Tirarse.ESPERAR;
-                administrar.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        while (mirando == capacidadCima) {
+            mirar.await();
         }
-        if (t == Tirarse.ESPERAR){
-            t = Tirarse.TOBOGAN_A;
-        } else if (t == Tirarse.TOBOGAN_A){
-            t = Tirarse.TOBOGAN_B;
-        } else {
-            t = Tirarse.TOBOGAN_A;
+        mirando++;
+        subiendo--;
+        subir.signal();
+        lock.unlock();
+        System.out.println(Thread.currentThread().getName() + " admirando vista");
+        Thread.sleep(2000);
+    }
+
+    public void desenderPorTobogan() throws InterruptedException {
+        int cualTobogan;
+        lock.lock();
+        quieren_tirarse++;
+        administrar.signal();
+        System.out.println(Thread.currentThread().getName() + " quiere tirarse");
+        while (queTobogan == 0) {
+            tirarse.await();
         }
+        quieren_tirarse--;
+        mirando--;
+        mirar.signal();
+        cualTobogan = queTobogan;
+        queTobogan = 0;
+        switch (cualTobogan) {
+            case 1:
+                while (!disponibleToboganA) {
+                    toboganA.await();
+                }
+                disponibleToboganA = false;
+                break;
+            case 2:
+                while (!disponibleToboganB) {
+                    toboganB.await();
+                }
+                disponibleToboganB = false;
+                break;
+        }
+        lock.unlock();
+
+        System.out.println(Thread.currentThread().getName() + " desendiendo por tobogan " + cualTobogan);
+        Thread.sleep(1000);
+
+        lock.lock();
+        if (cualTobogan == 1) {
+            disponibleToboganA = true;
+        } else if (cualTobogan == 2) {
+            disponibleToboganB = true;
+        }
+        administrar.signal();
+        lock.unlock();
+    }
+
+    public void administrar() throws InterruptedException {
+        lock.lock();
+        while (quieren_tirarse == 0 || (!disponibleToboganA && !disponibleToboganB)){
+            administrar.await();
+        }
+        if (disponibleToboganA){
+            queTobogan = 1;
+        } else if (disponibleToboganB){
+            queTobogan = 2;
+        }
+        tirarse.signal();
         lock.unlock();
     }
 
     @Override
     public void salir() {
-        // TODO implementar metodo salir()
-        lock.lock();
-        tirandose--;
-        System.out.println(Thread.currentThread().getName() + " salio del faromirador");
-        administrar.signal();
-        lock.unlock();
+        System.out.println(Thread.currentThread().getName() + " salio");
     }
 
     @Override
     public void cerrar() {
-        // TODO implementar metodo cerrar()
         abierto = false;
     }
 
     @Override
     public boolean isAbierto() {
-        return abierto;
-    }
-
-    private enum Tirarse {
-        ESPERAR,
-        TOBOGAN_A,
-        TOBOGAN_B
-    }
-
-    private static class Admin implements Runnable {
-        FaroMiradorLocks faroMirador;
-
-        public Admin(FaroMiradorLocks faroMirador) {
-            this.faroMirador = faroMirador;
-        }
-
-        @Override
-        public void run() {
-            while (true) {
-                faroMirador.administrar();
-            }
-        }
+        return false;
     }
 }

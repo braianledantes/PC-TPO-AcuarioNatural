@@ -1,8 +1,9 @@
 package hilos;
 
-import actividades.FaroMirador;
+import actividades.CarreraGomones;
 import actividades.FaroMiradorLocks;
 import actividades.Restaurante;
+import cosas.Bolso;
 import parque.Parque;
 
 import java.util.Random;
@@ -11,11 +12,15 @@ public class Visitante implements Runnable {
     private Parque parque;
     int cualRest;
     private Random random;
+    private Bolso bolso;
+    private int id;
 
-    public Visitante(Parque parque) {
+    public Visitante(int id, Parque parque) {
+        this.id = id;
         this.parque = parque;
         this.random = new Random();
         this.cualRest = random.nextInt(Parque.CANT_RESTUARANTES - 1);
+        this.bolso = new Bolso("Bolso" + id);
     }
 
     @Override
@@ -27,21 +32,34 @@ public class Visitante implements Runnable {
                 //almorzar();
                 //siguienteRestaurante();
                 //merendar();
-                visitarFaroMirador();
-
+                //visitarFaroMirador();
+                visitarCarreraGomones();
                 parque.salir();
             }
             volverAlOtroDia();
         }
     }
 
+    void visitarCarreraGomones() {
+        CarreraGomones carreraGomones = parque.entrarCarreraGomones();
+        if (carreraGomones != null) {
+            carreraGomones.irAlInicio();
+            carreraGomones.dejarBolso();
+            carreraGomones.bajarEnGomones();
+        }
+    }
+
     void visitarFaroMirador() {
         FaroMiradorLocks faroMirador = parque.entrarAlFaroMirador();
         if (faroMirador != null) {
-            faroMirador.entrar();
-            faroMirador.adminarVista();
-            faroMirador.desenderPorTobogan();
-            faroMirador.salir();
+            try {
+                faroMirador.entrar();
+                faroMirador.admirarVista();
+                faroMirador.desenderPorTobogan();
+                faroMirador.salir();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
