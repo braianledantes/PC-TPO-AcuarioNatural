@@ -3,7 +3,9 @@ package actividades;
 import java.util.concurrent.Semaphore;
 
 /**
- * Restaurante: en el pago del acceso al Parque se encuentra incluido el almuerzo y la merienda.
+ * u0
+ * <p>
+ * Restaurante: en el pago del acceso al mas.Parque se encuentra incluido el almuerzo y la merienda.
  * Existen tres restaurantes, pero solamente se puede consumir un almuerzo y una merienda en
  * cualquiera de ellos. Puede tomar el almuerzo en un restaurante y la merienda en otro. Los restaurantes
  * tienen capacidad limitada. Las personas son atendidas en orden de llegada. Los restaurantes tienen
@@ -11,15 +13,18 @@ import java.util.concurrent.Semaphore;
  */
 public class Restaurante implements Actividad {
     private boolean abierto;
-    private Semaphore lugares;
+    private int cantAct;
+    private Semaphore lugares, mutex;
     public static final int HORA_INICIO_ALMUERZO = 11;
     public static final int HORA_FIN_ALMUERZO = 13;
     public static final int HORA_INICIO_MERIENDA = 15;
     public static final int HORA_FIN_MERIENDA = 17;
 
     public Restaurante(int capacidad) {
-        abierto = false;
+        mutex = new Semaphore(1);
         lugares = new Semaphore(capacidad, true);
+        cantAct = 0;
+        abierto = false;
     }
 
     @Override
@@ -28,17 +33,16 @@ public class Restaurante implements Actividad {
     }
 
     @Override
-    public boolean entrar(){
-        boolean pudoEntrar = abierto;
-        if (pudoEntrar){
-            try {
-                lugares.acquire();
-                System.out.println(Thread.currentThread().getName() + " entro a un restaurante");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    public void entrar() {
+        try {
+            lugares.acquire();
+            mutex.acquire();
+            cantAct++;
+            mutex.release();
+            System.out.println(Thread.currentThread().getName() + " entro a un restaurante");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        return pudoEntrar;
     }
 
     public void almorzar(int horas) {
@@ -61,17 +65,30 @@ public class Restaurante implements Actividad {
 
     @Override
     public void salir() {
-        lugares.release();
+        try {
+            mutex.acquire();
+            if (abierto) {
+                cantAct--;
+                lugares.release();
+            } else {
+                cantAct = 0;
+                lugares.release(cantAct);
+            }
+            mutex.release();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         System.out.println(Thread.currentThread().getName() + " salio a un restaurante");
     }
 
     @Override
     public void cerrar() {
         abierto = false;
+        lugares.release();
     }
 
     @Override
-    public boolean isAbierto(){
+    public boolean isAbierto() {
         return abierto;
     }
 }

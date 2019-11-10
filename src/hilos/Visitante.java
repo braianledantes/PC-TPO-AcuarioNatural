@@ -1,6 +1,9 @@
+package hilos;
+
 import actividades.FaroMirador;
+import actividades.FaroMiradorLocks;
 import actividades.Restaurante;
-import hilos.Reloj;
+import parque.Parque;
 
 import java.util.Random;
 
@@ -12,17 +15,18 @@ public class Visitante implements Runnable {
     public Visitante(Parque parque) {
         this.parque = parque;
         this.random = new Random();
-        this.cualRest = random.nextInt(Parque.CANT_RESTUARANTES);
+        this.cualRest = random.nextInt(Parque.CANT_RESTUARANTES - 1);
     }
 
     @Override
     public void run() {
         int[] recorrido = new int[5];
         while (true) {
-            if (parque.entrar()) {
-//                almorzar();
-//                siguienteRestaurante();
-//                merendar();
+            if (parque.isAbierto()) {
+                parque.entrar();
+                //almorzar();
+                //siguienteRestaurante();
+                //merendar();
                 visitarFaroMirador();
 
                 parque.salir();
@@ -32,9 +36,9 @@ public class Visitante implements Runnable {
     }
 
     void visitarFaroMirador() {
-        FaroMirador faroMirador = parque.entrarAlFaroMirador();
+        FaroMiradorLocks faroMirador = parque.entrarAlFaroMirador();
         if (faroMirador != null) {
-            faroMirador.subir();
+            faroMirador.entrar();
             faroMirador.adminarVista();
             faroMirador.desenderPorTobogan();
             faroMirador.salir();

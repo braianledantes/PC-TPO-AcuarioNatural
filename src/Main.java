@@ -1,4 +1,6 @@
 import hilos.Reloj;
+import hilos.Visitante;
+import parque.Parque;
 
 public class Main {
     public static void main(String[] args) {

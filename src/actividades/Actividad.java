@@ -4,7 +4,7 @@ public interface Actividad {
 
     public void abrir();
 
-    public boolean entrar() throws InterruptedException;
+    public void entrar() throws InterruptedException;
 
     public void salir();
 

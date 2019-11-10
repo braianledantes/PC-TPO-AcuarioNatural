@@ -14,10 +14,10 @@ public class NadoDelfines implements Actividad {
         // TODO implementar metodo abrir()
     }
 
+
     @Override
-    public boolean entrar() {
+    public void entrar() {
         // TODO implementar metodo entrar()
-        return true;
     }
 
     @Override

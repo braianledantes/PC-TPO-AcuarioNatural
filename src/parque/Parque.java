@@ -1,3 +1,5 @@
+package parque;
+
 import actividades.*;
 
 /**
@@ -22,28 +24,32 @@ public class Parque implements Actividad {
     public static final int HORA_INICIO_INGRESO = 9;
     public static final int HORA_FIN_INGRESO = 17;
     public static final int HORA_CIERRE = 18;
-    private FaroMirador faroMirador;
+    private FaroMiradorLocks faroMirador;
+    private boolean abierto;
 
     public Parque(int molinetes, int hCierre) {
         this.molinetes = molinetes;
+        this.abierto = false;
         this.hCierre = hCierre;
         this.restaurantes = new Restaurante[CANT_RESTUARANTES];
         for (int i = 0; i < restaurantes.length; i++) {
             restaurantes[i] = new Restaurante(2 + (i * 3));
         }
-        faroMirador = new FaroMirador(10);
+        faroMirador = new FaroMiradorLocks(3);
     }
 
-    public void abrir() {
+    public synchronized void abrir() {
         // TODO terminar las otras actividades
         for (Restaurante r : restaurantes) {
             r.abrir();
         }
+        faroMirador.abrir();
+        abierto = true;
     }
 
-    public boolean entrar() {
+    public void entrar() {
         // TODO implementar
-        return true;
+       // System.out.println(Thread.currentThread().getName() + " entro al parque");
     }
 
     public Restaurante entrarAlRestaurante(int r) {
@@ -53,8 +59,8 @@ public class Parque implements Actividad {
         return restaurante;
     }
 
-    public FaroMirador entrarAlFaroMirador() {
-        FaroMirador retorno = null;
+    public FaroMiradorLocks entrarAlFaroMirador() {
+        FaroMiradorLocks retorno = null;
         if (faroMirador.isAbierto()) {
             retorno = faroMirador;
         }
@@ -70,15 +76,17 @@ public class Parque implements Actividad {
         // TODO implementar
     }
 
-    public void cerrar() {
+    public synchronized void cerrar() {
         // TODO terminar para las otras actividades
         for (Restaurante r : restaurantes) {
             r.cerrar();
         }
+        faroMirador.cerrar();
+        abierto = false;
     }
 
     @Override
-    public boolean isAbierto() {
-        return false;
+    public synchronized boolean isAbierto() {
+        return abierto;
     }
 }

@@ -1,5 +1,6 @@
 package actividades;
 
+
 import hilos.Reloj;
 
 import java.util.concurrent.Semaphore;
@@ -16,8 +17,7 @@ import java.util.concurrent.Semaphore;
  */
 public class FaroMirador implements Actividad {
     private boolean abierto;
-    private Semaphore escalera;
-    private Semaphore toboganes, mirador;
+    private Semaphore escalera, toboganes, mirador, administrar;
     private int capacidadEscalera, cantToboganes;
 
     public FaroMirador(int capacidadEscalera) {
@@ -26,7 +26,8 @@ public class FaroMirador implements Actividad {
         this.capacidadEscalera = capacidadEscalera;
         escalera = new Semaphore(capacidadEscalera, true);
         toboganes = new Semaphore(cantToboganes, true);
-        mirador = new Semaphore(cantToboganes / 2);
+        mirador = new Semaphore(capacidadEscalera);
+        administrar = new Semaphore(0);
     }
 
     @Override
@@ -35,25 +36,12 @@ public class FaroMirador implements Actividad {
     }
 
     @Override
-    public boolean entrar() {
+    public void entrar() {
         // TODO terminar metodo entrar()
-        boolean pudoEntrar = abierto;
-        if (pudoEntrar) {
-            try {
-                escalera.acquire();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        return pudoEntrar;
-    }
-
-    public void subir() {
-        // TODO terminar metodo subir()
         try {
             escalera.acquire();
             System.out.println(Thread.currentThread().getName() + " subiendo escalera");
-            Reloj.dormirHilo(2, 5);
+            Reloj.dormirHilo(4, 5);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -63,19 +51,29 @@ public class FaroMirador implements Actividad {
         // TODO terminar metodo adminarVista()
         try {
             mirador.acquire();
-            escalera.release();
             System.out.println(Thread.currentThread().getName() + " admirando vista desde faro");
-            Reloj.dormirHilo(2, 5);
+            escalera.release();
+            Reloj.dormirHilo(5, 7);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     public void desenderPorTobogan() {
-        // TODO terminar metodo desenderPorTobogan()
+        // TODO terminar metodo desenderPorTobogan()9
         try {
             toboganes.acquire();
+            System.out.println(Thread.currentThread().getName() + " desendiendo por el tobogan");
             mirador.release();
+            Reloj.dormirHilo(1,2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void administrar() {
+        try {
+            administrar.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -85,6 +83,7 @@ public class FaroMirador implements Actividad {
     public void salir() {
         // TODO implementar metodo salir()
         toboganes.release();
+        System.out.println(Thread.currentThread().getName() + " chau faromirador");
     }
 
     @Override
@@ -96,5 +95,20 @@ public class FaroMirador implements Actividad {
     @Override
     public boolean isAbierto() {
         return abierto;
+    }
+
+    private static class Admin implements Runnable {
+        FaroMirador faroMirador;
+
+        public Admin(FaroMirador faroMirador) {
+            this.faroMirador = faroMirador;
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                faroMirador.administrar();
+            }
+        }
     }
 }

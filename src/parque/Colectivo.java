@@ -1,3 +1,5 @@
+package parque;
+
 /**
  * TODO hacer el cole
  * Al parque se puede acceder en forma particular o por tour, en el caso del tour, se trasladan a través de

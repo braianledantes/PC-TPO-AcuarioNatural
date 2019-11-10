@@ -12,9 +12,8 @@ public class Tienda implements Actividad {
     }
 
     @Override
-    public boolean entrar() {
+    public void entrar() {
         // TODO implementar metodo entrar()
-        return true;
     }
 
     @Override
