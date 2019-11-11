@@ -1,11 +1,12 @@
 package actividades;
 
+import hilos.AdminFaroMirador;
+
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * TODO implementar FaroMirador
  * Faro-Mirador con vista a 40 m de altura y descenso en tobogán: Admira desde lo alto to-do el
  * esplendor de una maravilla natural y desciende en tobogán hasta una pileta. Para acceder al tobogán
  * es necesario subir por una escalera caracol, que tiene capacidad para n personas. Al llegar a la cima
@@ -20,6 +21,7 @@ public class FaroMiradorLocks implements Actividad {
     private boolean disponibleToboganA, disponibleToboganB;
     private Lock lock;
     private Condition subir, mirar, tirarse, administrar, toboganA, toboganB;
+    private Thread admin;
 
     public FaroMiradorLocks(int capacidadEscalera) {
         this.abierto = false;
@@ -39,6 +41,9 @@ public class FaroMiradorLocks implements Actividad {
 
         disponibleToboganA = true;
         disponibleToboganB = true;
+
+        admin = new Thread(new AdminFaroMirador(this), "adminFaroMirador");
+        admin.start();
     }
 
     @Override
@@ -47,82 +52,99 @@ public class FaroMiradorLocks implements Actividad {
     }
 
     @Override
-    public void entrar() throws InterruptedException {
+    public boolean entrar() {
+        // TODO cuando cierre el parque y hay gente en la fila los tiene que echar
         lock.lock();
-        while (subiendo == capacidadEscalera) {
-            subir.await();
-        }
-        subiendo++;
-        lock.unlock();
+        try {
 
-        System.out.println(Thread.currentThread().getName() + " subiendo escalera");
-        Thread.sleep(1000);
+            while (subiendo == capacidadEscalera) { // si la escalera esta llena espera afuera
+                subir.await();
+            }
+            subiendo++;
+            lock.unlock();
+
+            System.out.println(Thread.currentThread().getName() + " subiendo escalera");
+            Thread.sleep(1000);
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
+        }
+        return true;
     }
 
-    public void admirarVista() throws InterruptedException {
+    public void admirarVista() {
         lock.lock();
-        while (mirando == capacidadCima) {
-            mirar.await();
+        try {
+
+            while (mirando == capacidadCima) {
+                mirar.await();
+            }
+            mirando++;
+            subiendo--;
+            subir.signal();
+            lock.unlock();
+            System.out.println(Thread.currentThread().getName() + " admirando vista");
+            Thread.sleep(2000);
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
         }
-        mirando++;
-        subiendo--;
-        subir.signal();
-        lock.unlock();
-        System.out.println(Thread.currentThread().getName() + " admirando vista");
-        Thread.sleep(2000);
     }
 
-    public void desenderPorTobogan() throws InterruptedException {
+    public void desenderPorTobogan() {
         int cualTobogan;
         lock.lock();
-        quieren_tirarse++;
-        administrar.signal();
-        System.out.println(Thread.currentThread().getName() + " quiere tirarse");
-        while (queTobogan == 0) {
-            tirarse.await();
-        }
-        quieren_tirarse--;
-        mirando--;
-        mirar.signal();
-        cualTobogan = queTobogan;
-        queTobogan = 0;
-        switch (cualTobogan) {
-            case 1:
-                while (!disponibleToboganA) {
-                    toboganA.await();
-                }
-                disponibleToboganA = false;
-                break;
-            case 2:
-                while (!disponibleToboganB) {
-                    toboganB.await();
-                }
-                disponibleToboganB = false;
-                break;
-        }
-        lock.unlock();
+        try {
 
-        System.out.println(Thread.currentThread().getName() + " desendiendo por tobogan " + cualTobogan);
-        Thread.sleep(1000);
+            quieren_tirarse++;
+            administrar.signal();
+            System.out.println(Thread.currentThread().getName() + " quiere tirarse");
+            while (queTobogan == 0) {
+                tirarse.await();
+            }
+            quieren_tirarse--;
+            mirando--;
+            mirar.signal();
+            cualTobogan = queTobogan;
+            queTobogan = 0;
+            switch (cualTobogan) {
+                case 1:
+                    while (!disponibleToboganA) {
+                        toboganA.await();
+                    }
+                    disponibleToboganA = false;
+                    break;
+                case 2:
+                    while (!disponibleToboganB) {
+                        toboganB.await();
+                    }
+                    disponibleToboganB = false;
+                    break;
+            }
+            lock.unlock();
 
-        lock.lock();
-        if (cualTobogan == 1) {
-            disponibleToboganA = true;
-        } else if (cualTobogan == 2) {
-            disponibleToboganB = true;
+            System.out.println(Thread.currentThread().getName() + " desendiendo por tobogan " + cualTobogan);
+            Thread.sleep(1000);
+
+            lock.lock();
+            if (cualTobogan == 1) {
+                disponibleToboganA = true;
+            } else if (cualTobogan == 2) {
+                disponibleToboganB = true;
+            }
+            administrar.signal();
+            lock.unlock();
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
         }
-        administrar.signal();
-        lock.unlock();
     }
 
     public void administrar() throws InterruptedException {
         lock.lock();
-        while (quieren_tirarse == 0 || (!disponibleToboganA && !disponibleToboganB)){
+        while (quieren_tirarse == 0 || (!disponibleToboganA && !disponibleToboganB)) {
             administrar.await();
         }
-        if (disponibleToboganA){
+        if (disponibleToboganA) {
             queTobogan = 1;
-        } else if (disponibleToboganB){
+        } else if (disponibleToboganB) {
             queTobogan = 2;
         }
         tirarse.signal();

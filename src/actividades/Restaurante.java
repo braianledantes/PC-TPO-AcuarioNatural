@@ -33,7 +33,8 @@ public class Restaurante implements Actividad {
     }
 
     @Override
-    public void entrar() {
+    public boolean entrar() {
+        // TODO cuando cierre el parque y hay gente en la fila los tiene que echar
         try {
             lugares.acquire();
             mutex.acquire();
@@ -43,6 +44,7 @@ public class Restaurante implements Actividad {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        return true;
     }
 
     public void almorzar(int horas) {

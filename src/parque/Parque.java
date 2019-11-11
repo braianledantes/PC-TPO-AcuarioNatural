@@ -41,7 +41,7 @@ public class Parque implements Actividad {
     }
 
     public synchronized void abrir() {
-        // TODO terminar las otras actividades
+        // TODO abrir todas las actividades
         for (Restaurante r : restaurantes) {
             r.abrir();
         }
@@ -53,9 +53,10 @@ public class Parque implements Actividad {
 
     }
 
-    public void entrar() {
+    public boolean entrar() {
         // TODO implementar
        // System.out.println(Thread.currentThread().getName() + " entro al parque");
+        return true;
     }
 
     public Restaurante entrarAlRestaurante(int r) {
@@ -91,7 +92,7 @@ public class Parque implements Actividad {
     }
 
     public synchronized void cerrar() {
-        // TODO terminar para las otras actividades
+        // TODO cerrar todas las actividades
         for (Restaurante r : restaurantes) {
             r.cerrar();
         }

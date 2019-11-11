@@ -41,8 +41,9 @@ public class CarreraGomones implements Actividad {
 
 
     @Override
-    public void entrar() {
+    public boolean entrar() {
         // TODO implementar metodo entrar()
+        return true;
     }
 
     public void irAlInicio() {

@@ -36,7 +36,7 @@ public class FaroMiradorSemaforos implements Actividad {
     }
 
     @Override
-    public void entrar() {
+    public boolean entrar() {
         // TODO terminar metodo entrar()
         try {
             escalera.acquire();
@@ -45,6 +45,7 @@ public class FaroMiradorSemaforos implements Actividad {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        return true;
     }
 
     public void adminarVista() {
@@ -95,20 +96,5 @@ public class FaroMiradorSemaforos implements Actividad {
     @Override
     public boolean isAbierto() {
         return abierto;
-    }
-
-    private static class Admin implements Runnable {
-        FaroMiradorSemaforos faroMiradorSemaforos;
-
-        public Admin(FaroMiradorSemaforos faroMiradorSemaforos) {
-            this.faroMiradorSemaforos = faroMiradorSemaforos;
-        }
-
-        @Override
-        public void run() {
-            while (true) {
-                faroMiradorSemaforos.administrar();
-            }
-        }
     }
 }

@@ -11,32 +11,13 @@ public class Test_FaroMirador {
             visitantes[i] = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        faroMiradorLocks.entrar();
-                        faroMiradorLocks.admirarVista();
-                        faroMiradorLocks.desenderPorTobogan();
-                        faroMiradorLocks.salir();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    faroMiradorLocks.entrar();
+                    faroMiradorLocks.admirarVista();
+                    faroMiradorLocks.desenderPorTobogan();
+                    faroMiradorLocks.salir();
                 }
             }, "v" + i);
             visitantes[i].start();
         }
-
-        Thread admin = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        faroMiradorLocks.administrar();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }, "admin");
-        admin.start();
-
     }
 }

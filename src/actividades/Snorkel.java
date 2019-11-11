@@ -15,8 +15,9 @@ public class Snorkel implements Actividad {
     }
 
     @Override
-    public void entrar() {
+    public boolean entrar() {
         // TODO implementar metodo entrar()
+        return true;
     }
 
     @Override

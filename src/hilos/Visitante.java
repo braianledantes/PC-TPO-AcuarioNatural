@@ -52,14 +52,10 @@ public class Visitante implements Runnable {
     void visitarFaroMirador() {
         FaroMiradorLocks faroMirador = parque.entrarAlFaroMirador();
         if (faroMirador != null) {
-            try {
-                faroMirador.entrar();
-                faroMirador.admirarVista();
-                faroMirador.desenderPorTobogan();
-                faroMirador.salir();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            faroMirador.entrar();
+            faroMirador.admirarVista();
+            faroMirador.desenderPorTobogan();
+            faroMirador.salir();
         }
     }
 
