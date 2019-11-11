@@ -28,7 +28,7 @@ public class    CarreraGomones implements Actividad {
         this.participantes = participantes;
         bolsos = new HashMap<>();
         this.gomones = new Gomon[participantes];
-        this.tren = new Transporte("Tren de la alegria", 15);
+        this.tren = new Transporte("Tren", 15);
         this.tren.start();
         this.abierto = false;
     }
@@ -38,7 +38,6 @@ public class    CarreraGomones implements Actividad {
         // TODO implementar metodo abrir()
         abierto = true;
     }
-
 
     @Override
     public boolean entrar() {

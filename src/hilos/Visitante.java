@@ -36,7 +36,7 @@ public class Visitante implements Runnable {
                 visitarCarreraGomones();
                 parque.salir();
             }
-            volverAlOtroDia();
+            // volverAlOtroDia();
         }
     }
 
@@ -86,15 +86,11 @@ public class Visitante implements Runnable {
 
     void volverAlOtroDia() {
         int horaSalida = Reloj.getHora();
-        int tiempoEspera = 24 - horaSalida + Parque.HORA_INICIO_INGRESO;
+        int horas_de_espera = 24 - horaSalida + Parque.HORA_INICIO_INGRESO;
         if (horaSalida < Parque.HORA_INICIO_INGRESO) {
-            tiempoEspera = Parque.HORA_INICIO_INGRESO - horaSalida;
+            horas_de_espera = Parque.HORA_INICIO_INGRESO - horaSalida;
         }
         //System.out.println(Thread.currentThread().getName() + " haciendo otra cosa " + horaSalida + " - " + tiempoEspera);
-        try {
-            Thread.sleep(tiempoEspera * 10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Reloj.dormirHilo(1, 0);
     }
 }
