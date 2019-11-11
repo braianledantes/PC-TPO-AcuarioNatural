@@ -10,7 +10,7 @@ public class Main {
         Thread[] visitantes = new Thread[nVisitantes];
 
         for (int i = 0; i < visitantes.length; i++) {
-            visitantes[i] = new Thread(new Visitante(i, parque), "Visitante" + i);
+            visitantes[i] = new Thread(new Visitante(i, parque), "V" + i);
             visitantes[i].start();
         }
     }

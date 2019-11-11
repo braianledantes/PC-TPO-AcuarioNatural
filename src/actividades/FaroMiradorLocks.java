@@ -1,8 +1,5 @@
 package actividades;
 
-import hilos.AdminFaroMirador;
-import hilos.Reloj;
-
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -144,6 +141,6 @@ public class FaroMiradorLocks implements Actividad {
 
     @Override
     public boolean isAbierto() {
-        return false;
+        return abierto;
     }
 }

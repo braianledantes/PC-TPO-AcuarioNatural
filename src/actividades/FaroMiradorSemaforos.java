@@ -15,12 +15,12 @@ import java.util.concurrent.Semaphore;
  * importante destacar que una persona no se tira por el tobogán hasta que la anterior no haya llegado a
  * la pileta, es decir, sobre cada tobogán siempre hay a lo sumo una persona.
  */
-public class FaroMirador implements Actividad {
+public class FaroMiradorSemaforos implements Actividad {
     private boolean abierto;
     private Semaphore escalera, toboganes, mirador, administrar;
     private int capacidadEscalera, cantToboganes;
 
-    public FaroMirador(int capacidadEscalera) {
+    public FaroMiradorSemaforos(int capacidadEscalera) {
         this.abierto = false;
         this.cantToboganes = 2;
         this.capacidadEscalera = capacidadEscalera;
@@ -98,16 +98,16 @@ public class FaroMirador implements Actividad {
     }
 
     private static class Admin implements Runnable {
-        FaroMirador faroMirador;
+        FaroMiradorSemaforos faroMiradorSemaforos;
 
-        public Admin(FaroMirador faroMirador) {
-            this.faroMirador = faroMirador;
+        public Admin(FaroMiradorSemaforos faroMiradorSemaforos) {
+            this.faroMiradorSemaforos = faroMiradorSemaforos;
         }
 
         @Override
         public void run() {
             while (true) {
-                faroMirador.administrar();
+                faroMiradorSemaforos.administrar();
             }
         }
     }

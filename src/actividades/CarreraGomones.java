@@ -1,9 +1,8 @@
 package actividades;
 
+import hilos.Transporte;
+
 import java.util.HashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
 /**
  * TODO implementar clase
@@ -21,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class CarreraGomones implements Actividad {
     private int participantes;
     private HashMap<Integer, String> bolsos;
-    private Tren tren;
+    private Transporte tren;
     private Gomon[] gomones;
     private boolean abierto;
 
@@ -29,7 +28,7 @@ public class CarreraGomones implements Actividad {
         this.participantes = participantes;
         bolsos = new HashMap<>();
         this.gomones = new Gomon[participantes];
-        this.tren = new Tren("Tren de la alegria");
+        this.tren = new Transporte("Tren de la alegria", 15);
         this.tren.start();
         this.abierto = false;
     }
@@ -52,7 +51,7 @@ public class CarreraGomones implements Actividad {
          * o a través de un tren
          * interno que tiene una capacidad de 15 personas como máximo.
          */
-        if (!tren.isSalioTren()) {
+        if (!tren.disponible()) {
             tren.subirse();
             tren.bajarse();
         } else {
@@ -102,7 +101,7 @@ public class CarreraGomones implements Actividad {
 
     @Override
     public boolean isAbierto() {
-        return false;
+        return abierto;
     }
 }
 
@@ -134,105 +133,6 @@ class Camioneta extends Thread {
 
     @Override
     public void run() {
-
-    }
-}
-
-class Tren extends Thread {
-    public static final int CAPACIDAD = 15;
-    private boolean salioTren;
-    private int cantAct;
-    CountDownLatch latch;
-    Semaphore bajarse, arrancarTren, mutex;
-
-    public Tren(String name) {
-        super(name);
-        salioTren = false;
-        cantAct = 0;
-        bajarse = new Semaphore(0);
-        arrancarTren = new Semaphore(0);
-        mutex = new Semaphore(1);
-    }
-
-    public boolean isSalioTren() {
-        return salioTren;
-    }
-
-    @Override
-    public void run() {
-        while (true) {
-            esperarQueSuban();
-            llevarPasajeros();
-            dejarPasajeros();
-            volver();
-        }
-    }
-
-    public void esperarQueSuban() {
-        try {
-            // se crea una nueva espera
-            latch = new CountDownLatch(CAPACIDAD);
-            arrancarTren.acquire(); // se traba hasta que llegue el primer pasajero
-            latch.await(5, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void subirse() {
-        try {
-            mutex.acquire();
-            if (++cantAct == 1) {
-                arrancarTren.release(); // arranca el tren
-            }
-            mutex.release();
-            latch.countDown();
-            System.out.println(Thread.currentThread().getName() + " se subio al tren");
-            bajarse.acquire(); // se traba para que no haga nada durante el viaje
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void llevarPasajeros() {
-        try {
-            // para que no se suba nadie mas
-            mutex.acquire();
-            salioTren = true;
-            System.out.println("tren llevando " + cantAct + " pasajeros chuu chuuu");
-            mutex.release();
-
-            TimeUnit.SECONDS.sleep(5);
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void dejarPasajeros() {
-        try {
-            mutex.acquire();
-            salioTren = false;
-            bajarse.release(cantAct); // libero los pasajeros para que se bajen
-            System.out.println("El tren dejó los pasajeros");
-            mutex.release();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void bajarse() {
-        try {
-            mutex.acquire();
-            cantAct--;
-            System.out.println(Thread.currentThread().getName() + " se bajo del tren");
-            mutex.release();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void volver() {
 
     }
 }
