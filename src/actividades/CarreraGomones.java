@@ -17,7 +17,7 @@ import java.util.HashMap;
  * es limitada. Para habilitar una largada es necesario que haya h gomones listos para salir, no importa el
  * tipo.
  */
-public class CarreraGomones implements Actividad {
+public class    CarreraGomones implements Actividad {
     private int participantes;
     private HashMap<Integer, String> bolsos;
     private Transporte tren;
@@ -52,7 +52,7 @@ public class CarreraGomones implements Actividad {
          * o a través de un tren
          * interno que tiene una capacidad de 15 personas como máximo.
          */
-        if (!tren.disponible()) {
+        if (tren.disponible()) {
             tren.subirse();
             tren.bajarse();
         } else {

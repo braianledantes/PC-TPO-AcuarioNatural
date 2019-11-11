@@ -24,7 +24,7 @@ public class Parque implements Actividad {
     public static final int HORA_INICIO_INGRESO = 9;
     public static final int HORA_FIN_INGRESO = 17;
     public static final int HORA_CIERRE = 18;
-    private FaroMiradorLocks faroMirador;
+    private FaroMirador faroMirador;
     private CarreraGomones carreraGomones;
     private boolean abierto;
 
@@ -36,7 +36,7 @@ public class Parque implements Actividad {
         for (int i = 0; i < restaurantes.length; i++) {
             restaurantes[i] = new Restaurante(2 + (i * 3));
         }
-        faroMirador = new FaroMiradorLocks(3);
+        faroMirador = new FaroMirador(5, 10);
         carreraGomones = new CarreraGomones(20);
     }
 
@@ -66,8 +66,8 @@ public class Parque implements Actividad {
         return restaurante;
     }
 
-    public FaroMiradorLocks entrarAlFaroMirador() {
-        FaroMiradorLocks retorno = null;
+    public FaroMirador entrarAlFaroMirador() {
+        FaroMirador retorno = null;
         if (faroMirador.isAbierto()) {
             retorno = faroMirador;
         }

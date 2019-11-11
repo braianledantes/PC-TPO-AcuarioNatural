@@ -15,18 +15,18 @@ import java.util.concurrent.locks.ReentrantLock;
  * importante destacar que una persona no se tira por el tobogán hasta que la anterior no haya llegado a
  * la pileta, es decir, sobre cada tobogán siempre hay a lo sumo una persona.
  */
-public class FaroMiradorLocks implements Actividad {
+public class FaroMirador implements Actividad {
     private boolean abierto;
-    private int capacidadEscalera, capacidadCima, quieren_tirarse, queTobogan, subiendo, mirando;
+    private int capacidadEscalera, capacidadMirador, quieren_tirarse, queTobogan, subiendo, mirando;
     private boolean disponibleToboganA, disponibleToboganB;
     private Lock lock;
     private Condition subir, mirar, tirarse, administrar, toboganA, toboganB;
     private Thread admin;
 
-    public FaroMiradorLocks(int capacidadEscalera) {
+    public FaroMirador(int capacidadEscalera, int capacidadMirador) {
         this.abierto = false;
         this.capacidadEscalera = capacidadEscalera;
-        capacidadCima = capacidadEscalera + 10;
+        this.capacidadMirador = capacidadMirador;
         queTobogan = 0;
         quieren_tirarse = 0;
         subiendo = 0;
@@ -54,28 +54,32 @@ public class FaroMiradorLocks implements Actividad {
     @Override
     public boolean entrar() {
         // TODO cuando cierre el parque y hay gente en la fila los tiene que echar
+        boolean pudoEntrar = false;
         lock.lock();
         try {
 
-            while (subiendo == capacidadEscalera) { // si la escalera esta llena espera afuera
+            while (subiendo == capacidadEscalera && abierto) { // si la escalera esta llena espera afuera
                 subir.await();
             }
-            subiendo++;
+            pudoEntrar = abierto;
+            if (pudoEntrar)
+                subiendo++;
             lock.unlock();
 
-            System.out.println(Thread.currentThread().getName() + " subiendo escalera");
-            Thread.sleep(1000);
+            if (pudoEntrar) {
+                System.out.println(Thread.currentThread().getName() + " subiendo escalera");
+                Thread.sleep(1000);
+            }
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }
-        return true;
+        return pudoEntrar;
     }
 
     public void admirarVista() {
         lock.lock();
         try {
-
-            while (mirando == capacidadCima) {
+            while (mirando == capacidadMirador) {
                 mirar.await();
             }
             mirando++;
@@ -123,6 +127,7 @@ public class FaroMiradorLocks implements Actividad {
 
             System.out.println(Thread.currentThread().getName() + " desendiendo por tobogan " + cualTobogan);
             Thread.sleep(1000);
+            System.out.println(Thread.currentThread().getName() + " salio por tobogan " + cualTobogan);
 
             lock.lock();
             if (cualTobogan == 1) {

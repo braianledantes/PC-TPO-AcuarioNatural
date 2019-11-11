@@ -1,11 +1,11 @@
 package hilos;
 
-import actividades.FaroMiradorLocks;
+import actividades.FaroMirador;
 
 public class AdminFaroMirador implements Runnable {
-    FaroMiradorLocks faroMirador;
+    FaroMirador faroMirador;
 
-    public AdminFaroMirador(FaroMiradorLocks faroMirador) {
+    public AdminFaroMirador(FaroMirador faroMirador) {
         this.faroMirador = faroMirador;
     }
 

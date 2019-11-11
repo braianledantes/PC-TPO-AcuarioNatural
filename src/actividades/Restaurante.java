@@ -35,6 +35,7 @@ public class Restaurante implements Actividad {
     @Override
     public boolean entrar() {
         // TODO cuando cierre el parque y hay gente en la fila los tiene que echar
+        boolean pudoEntrar = false;
         try {
             lugares.acquire();
             mutex.acquire();

@@ -1,7 +1,7 @@
 package hilos;
 
 import actividades.CarreraGomones;
-import actividades.FaroMiradorLocks;
+import actividades.FaroMirador;
 import actividades.Restaurante;
 import cosas.Bolso;
 import parque.Parque;
@@ -42,17 +42,17 @@ public class Visitante implements Runnable {
 
     void visitarCarreraGomones() {
         CarreraGomones carreraGomones = parque.entrarCarreraGomones();
-        if (carreraGomones != null) {
+        if (carreraGomones != null && carreraGomones.entrar()) {
             carreraGomones.irAlInicio();
             carreraGomones.dejarBolso();
             carreraGomones.bajarEnGomones();
+            carreraGomones.salir();
         }
     }
 
     void visitarFaroMirador() {
-        FaroMiradorLocks faroMirador = parque.entrarAlFaroMirador();
-        if (faroMirador != null) {
-            faroMirador.entrar();
+        FaroMirador faroMirador = parque.entrarAlFaroMirador();
+        if (faroMirador != null && faroMirador.entrar()) {
             faroMirador.admirarVista();
             faroMirador.desenderPorTobogan();
             faroMirador.salir();
@@ -65,8 +65,7 @@ public class Visitante implements Runnable {
 
     void almorzar() {
         Restaurante restaurante = parque.entrarAlRestaurante(cualRest);
-        if (restaurante != null) {
-            restaurante.entrar();
+        if (restaurante != null && restaurante.entrar()) {
             restaurante.almorzar(2);
             restaurante.salir();
         }
