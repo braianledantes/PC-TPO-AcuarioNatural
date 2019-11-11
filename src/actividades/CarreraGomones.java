@@ -51,8 +51,7 @@ public class    CarreraGomones implements Actividad {
          * o a través de un tren
          * interno que tiene una capacidad de 15 personas como máximo.
          */
-        if (tren.disponible()) {
-            tren.subirse();
+        if (tren.subirse()) {
             tren.bajarse();
         } else {
             irEnBici();

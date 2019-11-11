@@ -5,7 +5,7 @@ import parque.Parque;
 import java.util.Random;
 
 public class Reloj extends Thread {
-    public static final int DURACION_HORA = 5000; // en milisegundos
+    public static final int DURACION_HORA = 10000; // en milisegundos
     private int hora;
     private static Reloj reloj;
     private static Random random = new Random();
@@ -56,13 +56,16 @@ public class Reloj extends Thread {
      * Duerme un hilo entre los horas enviados por parámetro
      *
      * @param min segundos iniciales
-     * @param max  segundos limite
+     * @param max segundos limite
      */
     public static void dormirHilo(int min, int max) {
         try {
             min *= DURACION_HORA;
             max *= DURACION_HORA;
-            Thread.sleep(min + random.nextInt(max - min));
+            if (max != 0)
+                Thread.sleep(min + random.nextInt(max - min));
+            else
+                Thread.sleep(min);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

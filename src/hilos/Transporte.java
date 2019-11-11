@@ -9,7 +9,7 @@ public class Transporte extends Thread {
     private boolean disponible;
     private int cantAct;
     private CountDownLatch irDestino, volverParada;
-    private Semaphore bajarse, arrancarTren, volver, mutex;
+    private Semaphore bajarse, arrancarTren, mutex;
 
     public Transporte(String name, int capacidad) {
         super(name);
@@ -18,7 +18,6 @@ public class Transporte extends Thread {
         cantAct = 0;
         bajarse = new Semaphore(0);
         arrancarTren = new Semaphore(0);
-        volver = new Semaphore(0);
         mutex = new Semaphore(1);
     }
 
@@ -31,6 +30,8 @@ public class Transporte extends Thread {
             volver();
         }
     }
+
+
 
     private void enEstacion() {
         try {
@@ -47,31 +48,26 @@ public class Transporte extends Thread {
         }
     }
 
-    public boolean disponible() {
-        boolean disponible = false;
+    public boolean subirse() {
+        boolean subirse = false;
         try {
             mutex.acquire();
-            disponible = this.disponible && cantAct < capacidad;
-            mutex.release();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return disponible;
-    }
-
-    public void subirse() {
-        try {
-            mutex.acquire();
-            if (++cantAct == 1) {
-                arrancarTren.release(); // arranca el tren
+            subirse = disponible && cantAct < capacidad;
+            if (subirse) {
+                if (++cantAct == 1) { // si es el primero arranca el tren
+                    arrancarTren.release();
+                }
             }
-            System.out.println(Thread.currentThread().getName() + " se subio al " + getName());
             mutex.release();
-            irDestino.countDown();
-            bajarse.acquire(); // se traba para que no haga nada durante el viaje
+            if (subirse) {
+                System.out.println(Thread.currentThread().getName() + " se subio al " + getName());
+                irDestino.countDown();
+                bajarse.acquire(); // se traba para que no haga nada durante el viaje
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        return subirse;
     }
 
     private void viajar() {
@@ -81,7 +77,7 @@ public class Transporte extends Thread {
             System.out.println(getName() + " viajando con " + cantAct + " pasajeros");
             mutex.release();
 
-            Reloj.dormirHilo(1,2);
+            Reloj.dormirHilo(1, 2);
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -106,9 +102,6 @@ public class Transporte extends Thread {
             cantAct--;
             System.out.println(Thread.currentThread().getName() + " se bajo del " + getName());
             volverParada.countDown();
-            if (cantAct == 0) { // si es el ultimo libera el tren para que vuelva
-                volver.release();
-            }
             mutex.release();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -117,10 +110,9 @@ public class Transporte extends Thread {
 
     private void volver() {
         try {
-            //   volver.acquire(); // tren quiere irse
-            volverParada.await();
+            volverParada.await(); // tren quiere irse
             System.out.println(getName() + " volviendo");
-            Reloj.dormirHilo(1,2);
+            Reloj.dormirHilo(1, 2);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

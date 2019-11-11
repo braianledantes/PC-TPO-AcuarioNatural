@@ -36,7 +36,7 @@ public class Visitante implements Runnable {
                 visitarCarreraGomones();
                 parque.salir();
             }
-            // volverAlOtroDia();
+            //volverAlOtroDia();
         }
     }
 
