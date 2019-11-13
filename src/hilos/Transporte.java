@@ -5,16 +5,18 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class Transporte extends Thread {
-    private int capacidad;
-    private boolean disponible;
+    private int capacidad, tiempoViaje;
+    private boolean disponible, abierto;
     private int cantAct;
     private CountDownLatch irDestino, volverParada;
     private Semaphore bajarse, arrancarTren, mutex;
 
-    public Transporte(String name, int capacidad) {
+    public Transporte(String name, int capacidad, int tiempoViaje) {
         super(name);
+        this.tiempoViaje = tiempoViaje;
         this.capacidad = capacidad;
-        disponible = true;
+        disponible = false;
+        abierto = false;
         cantAct = 0;
         bajarse = new Semaphore(0);
         arrancarTren = new Semaphore(0);
@@ -31,10 +33,29 @@ public class Transporte extends Thread {
         }
     }
 
+    public synchronized void abrir() {
+        abierto = true;
+        notify();
+    }
 
+    public synchronized void cerrar() {
+        abierto = false;
+        notify();
+    }
+
+    private synchronized void esperarAQueAbra() {
+        try {
+            while (!abierto) {
+                wait();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void enEstacion() {
         try {
+            esperarAQueAbra();
             System.out.println(getName() + " en la estacion");
             // se crea una nueva espera
             irDestino = new CountDownLatch(capacidad);
@@ -62,7 +83,6 @@ public class Transporte extends Thread {
             if (subirse) {
                 System.out.println(Thread.currentThread().getName() + " se subio al " + getName());
                 irDestino.countDown();
-                bajarse.acquire(); // se traba para que no haga nada durante el viaje
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -74,10 +94,10 @@ public class Transporte extends Thread {
         try {
             mutex.acquire();
             disponible = false;  // para que no se suba nadie mas
-            System.out.println(getName() + " viajando con " + cantAct + " pasajeros");
+            System.out.println(getName() + " viajando con " + cantAct + " pasajeros...");
             mutex.release();
 
-            Reloj.dormirHilo(1, 2);
+            Reloj.dormirHilo(tiempoViaje, tiempoViaje + 1);
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -98,6 +118,7 @@ public class Transporte extends Thread {
 
     public void bajarse() {
         try {
+            bajarse.acquire(); // se traba para que no haga nada durante el viaje
             mutex.acquire();
             cantAct--;
             System.out.println(Thread.currentThread().getName() + " se bajo del " + getName());
@@ -111,8 +132,8 @@ public class Transporte extends Thread {
     private void volver() {
         try {
             volverParada.await(); // tren quiere irse
-            System.out.println(getName() + " volviendo");
-            Reloj.dormirHilo(1, 2);
+            System.out.println(getName() + " volviendo...");
+            Reloj.dormirHilo(tiempoViaje, tiempoViaje + 1);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

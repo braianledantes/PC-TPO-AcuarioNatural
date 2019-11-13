@@ -4,6 +4,7 @@ import actividades.CarreraGomones;
 import actividades.FaroMirador;
 import actividades.Restaurante;
 import cosas.Bolso;
+import cosas.Gomon;
 import parque.Parque;
 
 import java.util.Random;
@@ -14,6 +15,7 @@ public class Visitante implements Runnable {
     private Random random;
     private Bolso bolso;
     private int id;
+    private Gomon gomon;
 
     public Visitante(int id, Parque parque) {
         this.id = id;
@@ -23,30 +25,53 @@ public class Visitante implements Runnable {
         this.bolso = new Bolso("Bolso" + id);
     }
 
+    public Gomon getGomon() {
+        return gomon;
+    }
+
+    public void setGomon(Gomon gomon) {
+        this.gomon = gomon;
+    }
+
     @Override
     public void run() {
         int[] recorrido = new int[5];
         while (true) {
             if (parque.isAbierto()) {
+                // irAlParque();
                 parque.entrar();
                 //almorzar();
                 //siguienteRestaurante();
                 //merendar();
-                //visitarFaroMirador();
+                // visitarFaroMirador();
                 visitarCarreraGomones();
                 parque.salir();
             }
-            //volverAlOtroDia();
+            volverDespues();
+        }
+    }
+
+    /**
+     * Si no puede ir al parque en conlectivo para llegar más rápido, va a ir en auto
+     */
+    void irAlParque() {
+        if (!parque.tomarCole()) {
+            tomarAuto();
         }
     }
 
     void visitarCarreraGomones() {
         CarreraGomones carreraGomones = parque.entrarCarreraGomones();
-        if (carreraGomones != null && carreraGomones.entrar()) {
-            carreraGomones.irAlInicio();
-            carreraGomones.dejarBolso();
-            carreraGomones.bajarEnGomones();
-            carreraGomones.salir();
+        if (carreraGomones != null) {
+            if (carreraGomones.entrar()) {
+               // carreraGomones.irAlInicio();
+                carreraGomones.dejarBolso();
+                Gomon gomon = carreraGomones.subirseAGomon();
+                carreraGomones.competir();
+                carreraGomones.terminarCarrera(gomon);
+                carreraGomones.retirarBolso();
+                carreraGomones.salir();
+            }
         }
     }
 
@@ -84,13 +109,29 @@ public class Visitante implements Runnable {
         }
     }
 
-    void volverAlOtroDia() {
+    void tomarAuto() {
+        System.out.println(Thread.currentThread().getName() + " yendo en auto al parque");
+        Reloj.dormirHilo(2, 3);
+        System.out.println(Thread.currentThread().getName() + " llegó en auto al parque");
+    }
+
+    void volverDespues() {
         int horaSalida = Reloj.getHora();
-        int horas_de_espera = 24 - horaSalida + Parque.HORA_INICIO_INGRESO;
+        int horaEspera;
         if (horaSalida < Parque.HORA_INICIO_INGRESO) {
-            horas_de_espera = Parque.HORA_INICIO_INGRESO - horaSalida;
+            horaEspera = Parque.HORA_INICIO_INGRESO - horaSalida;
+        } else {
+            horaEspera = 24 - horaSalida + Parque.HORA_INICIO_INGRESO;
         }
-        //System.out.println(Thread.currentThread().getName() + " haciendo otra cosa " + horaSalida + " - " + tiempoEspera);
-        Reloj.dormirHilo(1, 0);
+        //System.out.println(Thread.currentThread().getName() + " haciendo otra cosa por " + horaEspera + "hs");
+        Reloj.dormirHilo(horaEspera, 0);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public Bolso getBolso() {
+        return bolso;
     }
 }

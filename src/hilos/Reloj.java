@@ -5,14 +5,14 @@ import parque.Parque;
 import java.util.Random;
 
 public class Reloj extends Thread {
-    public static final int DURACION_HORA = 10000; // en milisegundos
+    public static final int DURACION_HORA = 1000; // en milisegundos
     private int hora;
     private static Reloj reloj;
     private static Random random = new Random();
     private Parque parque;
 
     private Reloj(Parque parque) {
-        this.hora = 8; // que arranque desde las 7:00 am xq no quiero esperar tanto
+        this.hora = 8; // que arranque desde las 8:00 am xq no quiero esperar tanto
         this.parque = parque;
     }
 
@@ -28,7 +28,7 @@ public class Reloj extends Thread {
     public void run() {
         while (true) {
             try {
-                System.out.println("Son a las " + hora);
+                System.out.println("Son las " + hora);
                 Thread.sleep(DURACION_HORA);
                 incrementarHora();
                 switch (reloj.hora) {
@@ -53,19 +53,17 @@ public class Reloj extends Thread {
     }
 
     /**
-     * Duerme un hilo entre los horas enviados por parámetro
-     *
-     * @param min segundos iniciales
-     * @param max segundos limite
+     * Duerme un hilo entre los horas enviados por parámetro,
+     * si el máximo es cero duerme las horas enviadas por minHoras
      */
-    public static void dormirHilo(int min, int max) {
+    public static void dormirHilo(int minHoras, int maxHoras) {
         try {
-            min *= DURACION_HORA;
-            max *= DURACION_HORA;
-            if (max != 0)
-                Thread.sleep(min + random.nextInt(max - min));
+            minHoras *= DURACION_HORA;
+            maxHoras *= DURACION_HORA;
+            if (maxHoras != 0)
+                Thread.sleep(minHoras + random.nextInt(maxHoras - minHoras));
             else
-                Thread.sleep(min);
+                Thread.sleep(minHoras);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

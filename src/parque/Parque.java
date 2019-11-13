@@ -1,6 +1,7 @@
 package parque;
 
 import actividades.*;
+import hilos.Transporte;
 
 /**
  * TODO terminar las otras actividades y terminar el parque
@@ -18,15 +19,17 @@ import actividades.*;
  * las 18.00 hrs.
  */
 public class Parque implements Actividad {
-    private int molinetes, hCierre;
-    private Restaurante[] restaurantes;
     public static final int CANT_RESTUARANTES = 3;
     public static final int HORA_INICIO_INGRESO = 9;
     public static final int HORA_FIN_INGRESO = 17;
     public static final int HORA_CIERRE = 18;
+    private boolean abierto;
+    private int molinetes, hCierre;
+    private Restaurante[] restaurantes;
     private FaroMirador faroMirador;
     private CarreraGomones carreraGomones;
-    private boolean abierto;
+    private Transporte[] colectivos;
+
 
     public Parque(int molinetes, int hCierre) {
         this.molinetes = molinetes;
@@ -36,8 +39,13 @@ public class Parque implements Actividad {
         for (int i = 0; i < restaurantes.length; i++) {
             restaurantes[i] = new Restaurante(2 + (i * 3));
         }
+        this.colectivos = new Transporte[2];
+        for (int i = 0; i < colectivos.length; i++) {
+            colectivos[i] = new Transporte("Colectivo" + i,8, 2);
+            colectivos[i].start();
+        }
         faroMirador = new FaroMirador(5, 10);
-        carreraGomones = new CarreraGomones(20);
+        carreraGomones = new CarreraGomones(5, 3, 15);
     }
 
     public synchronized void abrir() {
@@ -46,11 +54,24 @@ public class Parque implements Actividad {
             r.abrir();
         }
         faroMirador.abrir();
+        carreraGomones.abrir();
         abierto = true;
+        for (int i = 0; i < colectivos.length; i++) {
+            colectivos[i].abrir();
+        }
     }
 
-    public void ir() {
-
+    public boolean tomarCole() {
+        boolean tomoUno = false;
+        int i = 0;
+        while (!tomoUno && i < colectivos.length) {
+            tomoUno = colectivos[i].subirse();
+            if (tomoUno) {
+                colectivos[i].bajarse();
+            }
+            i++;
+        }
+        return tomoUno;
     }
 
     public boolean entrar() {
@@ -87,16 +108,20 @@ public class Parque implements Actividad {
         // TODO implementar
     }
 
-    public void cerrarIngreso() {
-        // TODO implementar
-    }
-
-    public synchronized void cerrar() {
+    public synchronized void cerrarIngreso() {
         // TODO cerrar todas las actividades
         for (Restaurante r : restaurantes) {
             r.cerrar();
         }
         faroMirador.cerrar();
+        for (int i = 0; i < colectivos.length; i++) {
+            colectivos[i].cerrar();
+        }
+        carreraGomones.cerrar();
+        abierto = false;
+    }
+
+    public synchronized void cerrar() {
         abierto = false;
     }
 

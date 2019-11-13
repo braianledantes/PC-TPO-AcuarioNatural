@@ -1,6 +1,7 @@
 package actividades;
 
 import hilos.AdminFaroMirador;
+import hilos.Reloj;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -48,17 +49,20 @@ public class FaroMirador implements Actividad {
 
     @Override
     public void abrir() {
+        lock.lock();
         abierto = true;
+        subir.signal();
+        lock.unlock();
     }
 
     @Override
     public boolean entrar() {
-        // TODO cuando cierre el parque y hay gente en la fila los tiene que echar
-        boolean pudoEntrar = false;
+        // cuando cierre el parque y hay gente en la fila no pueden entrar
+        boolean pudoEntrar = false; // para retornar si pudo entrar al FaroMirador
         lock.lock();
         try {
-
-            while (subiendo == capacidadEscalera && abierto) { // si la escalera esta llena espera afuera
+            // si la escalera esta llena espera afuera
+            while (subiendo == capacidadEscalera && abierto) {
                 subir.await();
             }
             pudoEntrar = abierto;
@@ -68,7 +72,7 @@ public class FaroMirador implements Actividad {
 
             if (pudoEntrar) {
                 System.out.println(Thread.currentThread().getName() + " subiendo escalera");
-                Thread.sleep(1000);
+                Reloj.dormirHilo(1,0);
             }
         } catch (InterruptedException ie) {
             ie.printStackTrace();
@@ -79,6 +83,7 @@ public class FaroMirador implements Actividad {
     public void admirarVista() {
         lock.lock();
         try {
+            // espera mientras esté lleno el mirador
             while (mirando == capacidadMirador) {
                 mirar.await();
             }
@@ -87,7 +92,7 @@ public class FaroMirador implements Actividad {
             subir.signal();
             lock.unlock();
             System.out.println(Thread.currentThread().getName() + " admirando vista");
-            Thread.sleep(2000);
+            Reloj.dormirHilo(1,0);
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }
@@ -97,18 +102,19 @@ public class FaroMirador implements Actividad {
         int cualTobogan;
         lock.lock();
         try {
-
             quieren_tirarse++;
             administrar.signal();
             System.out.println(Thread.currentThread().getName() + " quiere tirarse");
+            // espera a que el admin le asigne un tobogan
             while (queTobogan == 0) {
                 tirarse.await();
             }
+            // se tira por el tobogan que le indicó el administrador con cualTobogan
             quieren_tirarse--;
             mirando--;
-            mirar.signal();
+            mirar.signal(); // para que los que estan en la escalera puedan subir al mirador
             cualTobogan = queTobogan;
-            queTobogan = 0;
+            queTobogan = 0; // para que no se tire otro
             switch (cualTobogan) {
                 case 1:
                     while (!disponibleToboganA) {
@@ -129,6 +135,7 @@ public class FaroMirador implements Actividad {
             Thread.sleep(1000);
             System.out.println(Thread.currentThread().getName() + " salio por tobogan " + cualTobogan);
 
+            // libera el tobogan y le dice al admin que ya se tiro
             lock.lock();
             if (cualTobogan == 1) {
                 disponibleToboganA = true;
@@ -144,9 +151,11 @@ public class FaroMirador implements Actividad {
 
     public void administrar() throws InterruptedException {
         lock.lock();
+        // el admin espera mientras nadie se quiera tirar o no esté disponible ningún tobogán
         while (quieren_tirarse == 0 || (!disponibleToboganA && !disponibleToboganB)) {
             administrar.await();
         }
+        // le indica al visitante por cual tobogán tirarse
         if (disponibleToboganA) {
             queTobogan = 1;
         } else if (disponibleToboganB) {
@@ -163,7 +172,11 @@ public class FaroMirador implements Actividad {
 
     @Override
     public void cerrar() {
+        lock.lock();
+        // para que entre nadie si esta cerrado y los que estan en la fila de la escalera se van
         abierto = false;
+        subir.signal();
+        lock.unlock();
     }
 
     @Override
