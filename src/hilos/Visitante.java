@@ -10,21 +10,16 @@ import java.util.Random;
 
 public class Visitante implements Runnable {
     private Parque parque;
-    int cualRest;
-    private Random random;
-    private int id;
+    private int cualRest;
     private Gomon gomon;
+    private Random random;
     private int[] recorrido;
 
-    public Visitante(int id, Parque parque) {
-        this.id = id;
+    public Visitante(Parque parque) {
         this.parque = parque;
         this.random = new Random();
         this.cualRest = random.nextInt(Parque.CANT_RESTUARANTES - 1);
         recorrido = new int[4];
-        for (int i : recorrido) {
-            i = -1;
-        }
     }
 
     public Gomon getGomon() {
@@ -37,6 +32,7 @@ public class Visitante implements Runnable {
 
     @Override
     public void run() {
+        //int i = 0;
         while (true) {
             if (parque.isAbierto()) {
                 irAlParque();
@@ -48,6 +44,7 @@ public class Visitante implements Runnable {
                 merendar();
                 parque.salir();
             }
+            //i++;
             volverDespues();
         }
     }
@@ -123,9 +120,5 @@ public class Visitante implements Runnable {
         }
         //System.out.println(Thread.currentThread().getName() + " haciendo otra cosa por " + horaEspera + "hs");
         Reloj.dormirHilo(horaEspera, 0);
-    }
-
-    public int getId() {
-        return id;
     }
 }

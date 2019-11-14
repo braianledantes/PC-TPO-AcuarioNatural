@@ -36,8 +36,11 @@ public class Parque implements Actividad {
         this.abierto = false;
         this.hCierre = hCierre;
         this.restaurantes = new Restaurante[CANT_RESTUARANTES];
+
+        String[] nombresRestaurantes = {"Gusto Restaurant", "Morfi", "Macdonals"};
+
         for (int i = 0; i < restaurantes.length; i++) {
-            restaurantes[i] = new Restaurante(2 + (i * 3));
+            restaurantes[i] = new Restaurante(nombresRestaurantes[i], 10);
         }
         this.colectivos = new Transporte[2];
         for (int i = 0; i < colectivos.length; i++) {

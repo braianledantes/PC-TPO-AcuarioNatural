@@ -13,6 +13,7 @@ import java.util.concurrent.Semaphore;
  */
 public class Restaurante implements Actividad {
     private boolean abierto;
+    private String nombre;
     private int cantAct;
     private Semaphore lugares, mutex;
     public static final int HORA_INICIO_ALMUERZO = 11;
@@ -20,7 +21,8 @@ public class Restaurante implements Actividad {
     public static final int HORA_INICIO_MERIENDA = 15;
     public static final int HORA_FIN_MERIENDA = 17;
 
-    public Restaurante(int capacidad) {
+    public Restaurante(String nombre, int capacidad) {
+        this.nombre = nombre;
         mutex = new Semaphore(1);
         lugares = new Semaphore(capacidad, true);
         cantAct = 0;
@@ -41,7 +43,7 @@ public class Restaurante implements Actividad {
             mutex.acquire();
             cantAct++;
             mutex.release();
-            System.out.println(Thread.currentThread().getName() + " entro a un restaurante");
+            System.out.println(Thread.currentThread().getName() + " entro a " + nombre);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -50,7 +52,7 @@ public class Restaurante implements Actividad {
 
     public void almorzar(int horas) {
         try {
-            System.out.println(Thread.currentThread().getName() + " está almorzando");
+            System.out.println(Thread.currentThread().getName() + " está almorzando en " + nombre);
             Thread.sleep(horas * 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -59,7 +61,7 @@ public class Restaurante implements Actividad {
 
     public void merendar(int horas) {
         try {
-            System.out.println(Thread.currentThread().getName() + " está merendando");
+            System.out.println(Thread.currentThread().getName() + " está merendando en " + nombre);
             Thread.sleep(horas * 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -81,7 +83,7 @@ public class Restaurante implements Actividad {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println(Thread.currentThread().getName() + " salio a un restaurante");
+        System.out.println(Thread.currentThread().getName() + " salio de " + nombre);
     }
 
     @Override
