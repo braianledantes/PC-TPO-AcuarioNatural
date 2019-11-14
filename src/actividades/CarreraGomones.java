@@ -25,25 +25,27 @@ import java.util.concurrent.TimeoutException;
 public class CarreraGomones implements Actividad {
     private Transporte tren;
     private Gomon[] gomones;
-    private boolean abierto, camionetaFin, camionetaInicio;
-    private CyclicBarrier largada;
+    private boolean abierto, camionetaFin, camionetaInicio, compitiendo;
+    private CyclicBarrier precompetencia, largada;
     private Camioneta camioneta;
     private Gomon gomonGanador;
-    private int enCompetencia, cantCompetidores;
+    private int enCompetencia, cantMaxCompetidores, enPrecompetencia;
 
     public CarreraGomones(int cantGomonesIndividuales, int cantGomonesCompartidos, int capacidadTren) {
         this.gomones = new Gomon[cantGomonesIndividuales + cantGomonesCompartidos];
-        this.cantCompetidores = cantGomonesIndividuales + (cantGomonesCompartidos * 2);
+        this.cantMaxCompetidores = cantGomonesIndividuales + (cantGomonesCompartidos * 2);
         this.tren = new Transporte("Tren", capacidadTren, 1);
         this.abierto = false;
-        // cuando todos dejan los bolsos en la camioneta se larga la carrera y la camineta deja los bolsos en el final
-        this.largada = new CyclicBarrier(cantCompetidores);
+
+        this.precompetencia = new CyclicBarrier(cantMaxCompetidores);
         this.camioneta = new Camioneta(this);
 
         this.gomonGanador = null;
         this.camionetaInicio = true;
         this.camionetaFin = false;
         this.enCompetencia = 0;
+        this.enPrecompetencia = 0;
+        this.compitiendo = false;
 
         // creo los gomones individuales
         for (int i = 0; i < cantGomonesIndividuales; i++) {
@@ -71,7 +73,7 @@ public class CarreraGomones implements Actividad {
     }
 
     /**
-     * El competidor trata de ir al inicio de la carrera en tren y si no puede va en bicicleta
+     * El competidor trata de ir al inicio de la carrera en tren y si no puede va en bicicleta.
      */
     public void irAlInicio() {
         if (tren.subirse()) {
@@ -87,7 +89,38 @@ public class CarreraGomones implements Actividad {
     }
 
     /**
-     * El competidor espera a que esté la camioneta disponible para poder dejar su bolso allí
+     * El competidor espera en precompetencia mientras haya gente compitiendo.
+     */
+    public void esperarEnPrecompetencia() {
+        try {
+            synchronized (this) {
+                while (compitiendo || enPrecompetencia == cantMaxCompetidores) {
+                    wait();
+                }
+                enPrecompetencia++;
+            }
+            precompetencia.await(2 * Reloj.DURACION_HORA, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            //e.printStackTrace();
+        } catch (BrokenBarrierException e) {
+            //e.printStackTrace();
+        } catch (TimeoutException e) {
+            precompetencia.reset();
+        } finally {
+            synchronized (this) {
+                if (largada == null) {
+                    largada = new CyclicBarrier(enPrecompetencia);
+                    // se van todos de precompetencia
+                    enPrecompetencia = 0;
+                    compitiendo = true;
+                }
+                notifyAll();
+            }
+        }
+    }
+
+    /**
+     * El competidor espera a que esté la camioneta disponible para poder dejar su bolso allí.
      */
     public synchronized void dejarBolso() {
         // TODO ver la manera de que lleguen los dos juntos a la meta cuando el gomón es compartido
@@ -98,11 +131,16 @@ public class CarreraGomones implements Actividad {
                 e.printStackTrace();
             }
         }
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         System.out.println(Thread.currentThread().getName() + " dejó su bolso");
     }
 
     /**
-     * El competidor se sube a un gomón que esté disponible, no importa si es indiviual o compartido
+     * El competidor se sube a un gomón que esté disponible, no importa si es indiviual o compartido.
      *
      * @return retorna el gomon al que se subio el visitante
      */
@@ -111,8 +149,12 @@ public class CarreraGomones implements Actividad {
         while (i < gomones.length && !gomones[i].subir()) {
             i++;
         }
-        // System.out.println(Thread.currentThread().getName() + " se subio al gomon " + gomones[i]);
-        // TODO ver xq entran más si ya empezó la carrera, ArrayIndexOutOfBoundsException
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(Thread.currentThread().getName() + " se subio al gomon");
         return gomones[i];
     }
 
@@ -122,18 +164,17 @@ public class CarreraGomones implements Actividad {
      */
     public void competir() {
         try {
-            System.out.println(Thread.currentThread().getName() + " esperando para competir... ");
-            largada.await(2 * Reloj.DURACION_HORA, TimeUnit.MILLISECONDS);
+            //System.out.println(Thread.currentThread().getName() + " esperando para competir... ");
+            largada.await();
         } catch (InterruptedException e) {
         } catch (BrokenBarrierException e) {
-        } catch (TimeoutException e) {
-            largada.reset();
         }
         synchronized (this) {
             // si es el primero en salir, la camioneta lleva los bolsos
             enCompetencia++;
             if (enCompetencia == 1) {
                 camionetaInicio = false;
+                largada = null;
             }
             notifyAll();
         }
@@ -143,10 +184,12 @@ public class CarreraGomones implements Actividad {
 
     /**
      * Método utilizado por la camioneta.
-     * Espera a que todos los competidores dejen los bolsos
+     * Espera a que todos los competidores dejen los bolsos.
      */
     public synchronized void esperarQueDejenBolsos() {
         System.out.println("Camioneta en inicio");
+        compitiendo = false;
+        notifyAll();
         while (camionetaInicio) {
             try {
                 wait();
@@ -158,7 +201,7 @@ public class CarreraGomones implements Actividad {
 
     /**
      * Método utilizado por la camioneta.
-     * Cuando todos dejan los bolsos en la camioneta se larga la carrera y la camineta deja los bolsos en el final
+     * Cuando todos dejan los bolsos en la camioneta se larga la carrera y la camineta deja los bolsos en el final.
      */
     public void llevarBolsos() {
         System.out.println("Camioneta llevando los bolsos...");
@@ -227,8 +270,8 @@ public class CarreraGomones implements Actividad {
     }
 
     /**
-     * Método utilizado por la camioneta
-     * Vuelve al punto de partida de la carrera para que los competidores dejen sus bolsos
+     * Método utilizado por la camioneta.
+     * Vuelve al punto de partida de la carrera para que los competidores dejen sus bolsos.
      */
     public void volver() {
         System.out.println("Camioneta volviendo...");

@@ -55,9 +55,13 @@ public class FaroMirador implements Actividad {
         lock.unlock();
     }
 
+    /**
+     * Cuando cierre el parque y hay gente en la fila no pueden entrar, se retiran.
+     * Si pudo entrar y la escalera está llena, espera a que se libere.
+     * @return si pudo entrar al FaroMirador.
+     */
     @Override
     public boolean entrar() {
-        // cuando cierre el parque y hay gente en la fila no pueden entrar
         boolean pudoEntrar = false; // para retornar si pudo entrar al FaroMirador
         lock.lock();
         try {
@@ -80,6 +84,9 @@ public class FaroMirador implements Actividad {
         return pudoEntrar;
     }
 
+    /**
+     * El visitante admira la vista desde la cima del faro, si está lleno espera a que haya lugar.
+     */
     public void admirarVista() {
         lock.lock();
         try {
@@ -98,6 +105,9 @@ public class FaroMirador implements Actividad {
         }
     }
 
+    /**
+     * El visitante espera a que el admin le asigne un tobogán y luego se tira.
+     */
     public void desenderPorTobogan() {
         int cualTobogan;
         lock.lock();
@@ -149,13 +159,18 @@ public class FaroMirador implements Actividad {
         }
     }
 
+    /**
+     * Método utilizado por el arministrador de los toboganes.
+     * El admin espera mientras nadie se quiera tirar o ningún tobogán esté disponible.
+     * Luego le indica al visitante por cual tobogán tirarse.
+     * @throws InterruptedException
+     */
     public void administrar() throws InterruptedException {
         lock.lock();
-        // el admin espera mientras nadie se quiera tirar o no esté disponible ningún tobogán
         while (quieren_tirarse == 0 || (!disponibleToboganA && !disponibleToboganB)) {
             administrar.await();
         }
-        // le indica al visitante por cual tobogán tirarse
+
         if (disponibleToboganA) {
             queTobogan = 1;
         } else if (disponibleToboganB) {
@@ -170,10 +185,12 @@ public class FaroMirador implements Actividad {
         System.out.println(Thread.currentThread().getName() + " salio");
     }
 
+    /**
+     *  Para que entre nadie si esta cerrado y los que estan en la fila de la escalera se van.
+     */
     @Override
     public void cerrar() {
         lock.lock();
-        // para que entre nadie si esta cerrado y los que estan en la fila de la escalera se van
         abierto = false;
         subir.signal();
         lock.unlock();

@@ -106,6 +106,7 @@ public class Parque implements Actividad {
     @Override
     public void salir() {
         // TODO implementar
+        System.out.println(Thread.currentThread().getName() + " salió del parque.");
     }
 
     public synchronized void cerrarIngreso() {

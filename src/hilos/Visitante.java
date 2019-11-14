@@ -14,12 +14,17 @@ public class Visitante implements Runnable {
     private Random random;
     private int id;
     private Gomon gomon;
+    private int[] recorrido;
 
     public Visitante(int id, Parque parque) {
         this.id = id;
         this.parque = parque;
         this.random = new Random();
         this.cualRest = random.nextInt(Parque.CANT_RESTUARANTES - 1);
+        recorrido = new int[4];
+        for (int i : recorrido) {
+            i = -1;
+        }
     }
 
     public Gomon getGomon() {
@@ -32,16 +37,15 @@ public class Visitante implements Runnable {
 
     @Override
     public void run() {
-        int[] recorrido = new int[5];
         while (true) {
             if (parque.isAbierto()) {
-                // irAlParque();
+                irAlParque();
                 parque.entrar();
-                //almorzar();
-                //siguienteRestaurante();
-                //merendar();
-                // visitarFaroMirador();
+                visitarFaroMirador();
+                almorzar();
+                siguienteRestaurante();
                 visitarCarreraGomones();
+                merendar();
                 parque.salir();
             }
             volverDespues();
@@ -61,7 +65,8 @@ public class Visitante implements Runnable {
         CarreraGomones carreraGomones = parque.entrarCarreraGomones();
         if (carreraGomones != null) {
             if (carreraGomones.entrar()) {
-               // carreraGomones.irAlInicio();
+                carreraGomones.irAlInicio();
+                carreraGomones.esperarEnPrecompetencia();
                 carreraGomones.dejarBolso();
                 Gomon gomon = carreraGomones.subirseAGomon();
                 carreraGomones.competir();
@@ -79,10 +84,6 @@ public class Visitante implements Runnable {
             faroMirador.desenderPorTobogan();
             faroMirador.salir();
         }
-    }
-
-    void establecerRecorrido() {
-        // TODO implementar metodo establecerRecorrido()
     }
 
     void almorzar() {
