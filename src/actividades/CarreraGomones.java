@@ -45,10 +45,11 @@ public class CarreraGomones implements Actividad {
         this.camionetaFin = false;
         this.enCompetencia = 0;
 
-        // creo los gomones
+        // creo los gomones individuales
         for (int i = 0; i < cantGomonesIndividuales; i++) {
             gomones[i] = new Gomon(1);
         }
+        // creo los gomones compartidos
         for (int i = cantGomonesIndividuales; i < gomones.length; i++) {
             gomones[i] = new Gomon(2);
         }
@@ -89,6 +90,7 @@ public class CarreraGomones implements Actividad {
      * El competidor espera a que esté la camioneta disponible para poder dejar su bolso allí
      */
     public synchronized void dejarBolso() {
+        // TODO ver la manera de que lleguen los dos juntos a la meta cuando el gomón es compartido
         while (!camionetaInicio) {
             try {
                 wait();

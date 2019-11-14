@@ -3,7 +3,6 @@ package hilos;
 import actividades.CarreraGomones;
 import actividades.FaroMirador;
 import actividades.Restaurante;
-import cosas.Bolso;
 import cosas.Gomon;
 import parque.Parque;
 
@@ -13,7 +12,6 @@ public class Visitante implements Runnable {
     private Parque parque;
     int cualRest;
     private Random random;
-    private Bolso bolso;
     private int id;
     private Gomon gomon;
 
@@ -22,7 +20,6 @@ public class Visitante implements Runnable {
         this.parque = parque;
         this.random = new Random();
         this.cualRest = random.nextInt(Parque.CANT_RESTUARANTES - 1);
-        this.bolso = new Bolso("Bolso" + id);
     }
 
     public Gomon getGomon() {
@@ -129,9 +126,5 @@ public class Visitante implements Runnable {
 
     public int getId() {
         return id;
-    }
-
-    public Bolso getBolso() {
-        return bolso;
     }
 }
