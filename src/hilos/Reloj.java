@@ -5,7 +5,7 @@ import parque.Parque;
 import java.util.Random;
 
 public class Reloj extends Thread {
-    public static final int DURACION_HORA = 1000; // en milisegundos
+    public static final int DURACION_HORA = 5000; // en milisegundos
     private int hora;
     private static Reloj reloj;
     private static Random random = new Random();

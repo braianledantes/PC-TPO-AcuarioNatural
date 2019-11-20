@@ -28,6 +28,7 @@ public class Parque implements Actividad {
     private Restaurante[] restaurantes;
     private FaroMirador faroMirador;
     private CarreraGomones carreraGomones;
+    private Snorkel snorkel;
     private Transporte[] colectivos;
 
 
@@ -49,6 +50,7 @@ public class Parque implements Actividad {
         }
         faroMirador = new FaroMirador(5, 10);
         carreraGomones = new CarreraGomones(5, 3, 15);
+        snorkel = new Snorkel(6,6,12);
     }
 
     public synchronized void abrir() {
@@ -58,6 +60,7 @@ public class Parque implements Actividad {
         }
         faroMirador.abrir();
         carreraGomones.abrir();
+        snorkel.abrir();
         abierto = true;
         for (int i = 0; i < colectivos.length; i++) {
             colectivos[i].abrir();
@@ -106,6 +109,14 @@ public class Parque implements Actividad {
         return carrera;
     }
 
+    public Snorkel entrarSnorkel() {
+        Snorkel s = null;
+        if (snorkel.isAbierto()) {
+            s = snorkel;
+        }
+        return s;
+    }
+
     @Override
     public void salir() {
         // TODO implementar
@@ -122,6 +133,7 @@ public class Parque implements Actividad {
             colectivos[i].cerrar();
         }
         carreraGomones.cerrar();
+        snorkel.cerrar();
         abierto = false;
     }
 

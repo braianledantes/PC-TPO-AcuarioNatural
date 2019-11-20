@@ -3,6 +3,7 @@ package hilos;
 import actividades.CarreraGomones;
 import actividades.FaroMirador;
 import actividades.Restaurante;
+import actividades.Snorkel;
 import cosas.Gomon;
 import parque.Parque;
 
@@ -35,13 +36,14 @@ public class Visitante implements Runnable {
         //int i = 0;
         while (true) {
             if (parque.isAbierto()) {
-                irAlParque();
+                //irAlParque();
                 parque.entrar();
-                visitarFaroMirador();
-                almorzar();
-                siguienteRestaurante();
-                visitarCarreraGomones();
-                merendar();
+                //visitarFaroMirador();
+                //almorzar();
+                //siguienteRestaurante();
+                //merendar();
+                //visitarCarreraGomones();
+                visitarSnorkel();
                 parque.salir();
             }
             //i++;
@@ -55,6 +57,15 @@ public class Visitante implements Runnable {
     void irAlParque() {
         if (!parque.tomarCole()) {
             tomarAuto();
+        }
+    }
+
+    void visitarSnorkel() {
+        Snorkel snorkel = parque.entrarSnorkel();
+        if (snorkel != null && snorkel.entrar()) {
+            snorkel.adquirirEquipo();
+            snorkel.nadar();
+            snorkel.salir();
         }
     }
 

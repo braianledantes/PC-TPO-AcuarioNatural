@@ -38,9 +38,16 @@ Es condición obligatoria para la cursada, la entrega del trabajo final individu
 El trabajo tiene 2 entregas. ya sea para la cursada o para la promoción, la diferencia radica en la cantidad de incisos a resolver y las fechas de entrega. Para cada entrega debe crearse un informe extensión pdf con: Clases, métodos de sincronización utilizados, consideraciones especiales que hayan tenido en cuenta al momento de realizar el ejercicio, estas consideraciones pueden ser aquellas que el enunciado no las especifique, PERO que no hagan que cambie el enunciado.
 
 Los estudiantes que puedan y quieran optar por la promoción tendrán:
+
 Las tres actividades a desarrollar son: Restaurante, Faro-Mirador con vista a 40 m de altura y descenso en tobogán, Carrera de gomones por el río.
+
 Primer Entrega: Jueves 7/11 a última hora (defensa viernes 8/11), 2 de las 3 actividades, de los cuales “ Carrera de gomones por el río ” debe realizarse sin excepción.
+
 Segunda Entrega: Jueves 21/11 a última hora (defensa viernes 22/11). Los tres ejercicios resueltos, se tomarán además preguntas teóricas.
+
 Para el cursado sin promoción:
+
 Primer Entrega: Jueves 14/11 a última hora (defensa viernes 15/11), 3 incisos.
+
 Segunda Entrega: Jueves 28/11 a última hora (defensa viernes 29/11) 2 incisos más restantes.
+
