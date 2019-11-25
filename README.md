@@ -2,11 +2,11 @@
 ### PARQUE “ECO-PCS”
 
 ------------
+
 Se desea simular el funcionamiento del parque ecológico “ ECO-PCS ”, un acuario natural, desde que los visitantes llegan al parque hasta que se van. Al parque se puede acceder en forma particular o por tour, en el caso del tour, se trasladan a través de colectivos folklóricos con una capacidad no mayor a 25 personas, que llegan a un estacionamiento destinado para tal fin. Al momento de arribar al parque se le entregarán pulseras a los visitantes que le permitirán el acceso al parque. El ingreso al parque está indicado a través del paso de k molinetes. Una vez ingresado, el visitante puede optar por ir al shop o disfrutar de las actividades del parque. En el shop se pueden adquirir suvenires de distinta clase, los cuales se pueden abonar en una de las dos cajas disponibles.
 El complejo se encuentra abierto para el ingreso de 09:00 a 17:00hs. Considere que las actividades cierran a las 18.00 hrs.
 
 ------------
-
 
 Dentro de las actividades principales, se encuentran:
 #### Carrera de gomones por el río 
@@ -21,7 +21,6 @@ Desarrollo del trabajo individual.**
 
 ------------
 
-
 ###SEGUNDA ENTREGA NO PROMOCIÓN
  A lo anterior agregarle las siguientes actividades:
 #### Nado con delfines 
@@ -31,8 +30,7 @@ Existe la posibilidad de realizar snorkel en una laguna, para lo cual es necesar
 
 ------------
 
-
-###Entregas 
+###Entregas
 Es condición obligatoria para la cursada, la entrega del trabajo final individual en tiempo y forma. La entrega fuera de término se considera DESAPROBADO.
 
 El trabajo tiene 2 entregas. ya sea para la cursada o para la promoción, la diferencia radica en la cantidad de incisos a resolver y las fechas de entrega. Para cada entrega debe crearse un informe extensión pdf con: Clases, métodos de sincronización utilizados, consideraciones especiales que hayan tenido en cuenta al momento de realizar el ejercicio, estas consideraciones pueden ser aquellas que el enunciado no las especifique, PERO que no hagan que cambie el enunciado.
