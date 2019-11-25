@@ -4,8 +4,8 @@ import parque.Parque;
 
 public class Main {
     public static void main(String[] args) {
-        int hCierre = 18, molinetes = 4, nVisitantes = 15;
-        Parque parque = new Parque(molinetes, hCierre);
+        int molinetes = 4, nVisitantes = 70;
+        Parque parque = new Parque(molinetes);
         Reloj.getInstance(parque).start(); // inicio el reloj
         Thread[] visitantes = new Thread[nVisitantes];
 

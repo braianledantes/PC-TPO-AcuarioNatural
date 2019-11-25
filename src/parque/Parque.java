@@ -24,18 +24,18 @@ public class Parque implements Actividad {
     public static final int HORA_FIN_INGRESO = 17;
     public static final int HORA_CIERRE = 18;
     private boolean abierto;
-    private int molinetes, hCierre;
+    private int molinetes;
     private Restaurante[] restaurantes;
     private FaroMirador faroMirador;
     private CarreraGomones carreraGomones;
     private Snorkel snorkel;
+    private NadoDelfines nadoDelfines;
     private Transporte[] colectivos;
 
 
-    public Parque(int molinetes, int hCierre) {
+    public Parque(int molinetes) {
         this.molinetes = molinetes;
         this.abierto = false;
-        this.hCierre = hCierre;
         this.restaurantes = new Restaurante[CANT_RESTUARANTES];
 
         String[] nombresRestaurantes = {"Gusto Restaurant", "Morfi", "Macdonals"};
@@ -51,6 +51,11 @@ public class Parque implements Actividad {
         faroMirador = new FaroMirador(5, 10);
         carreraGomones = new CarreraGomones(5, 3, 15);
         snorkel = new Snorkel(6,6,12);
+        nadoDelfines = new NadoDelfines(4, 10);
+    }
+
+    public synchronized void actualizarActividades() {
+        nadoDelfines.iniciarTurno();
     }
 
     public synchronized void abrir() {
@@ -61,9 +66,10 @@ public class Parque implements Actividad {
         faroMirador.abrir();
         carreraGomones.abrir();
         snorkel.abrir();
+        nadoDelfines.abrir();
         abierto = true;
-        for (int i = 0; i < colectivos.length; i++) {
-            colectivos[i].abrir();
+        for (Transporte colectivo : colectivos) {
+            colectivo.abrir();
         }
     }
 
@@ -86,14 +92,14 @@ public class Parque implements Actividad {
         return true;
     }
 
-    public Restaurante entrarAlRestaurante(int r) {
+    public Restaurante getRestaurante(int r) {
         Restaurante restaurante = null;
         if (restaurantes[r].isAbierto())
             restaurante = restaurantes[r];
         return restaurante;
     }
 
-    public FaroMirador entrarAlFaroMirador() {
+    public FaroMirador getFaroMirador() {
         FaroMirador retorno = null;
         if (faroMirador.isAbierto()) {
             retorno = faroMirador;
@@ -101,7 +107,7 @@ public class Parque implements Actividad {
         return retorno;
     }
 
-    public CarreraGomones entrarCarreraGomones() {
+    public CarreraGomones getCarreraGomones() {
         CarreraGomones carrera = null;
         if (faroMirador.isAbierto()) {
             carrera = carreraGomones;
@@ -109,12 +115,20 @@ public class Parque implements Actividad {
         return carrera;
     }
 
-    public Snorkel entrarSnorkel() {
+    public Snorkel getSnorkel() {
         Snorkel s = null;
         if (snorkel.isAbierto()) {
             s = snorkel;
         }
         return s;
+    }
+
+    public NadoDelfines getNadoDelfines() {
+        NadoDelfines nd = null;
+        if (nadoDelfines.isAbierto()) {
+            nd = nadoDelfines;
+        }
+        return nd;
     }
 
     @Override
@@ -134,6 +148,7 @@ public class Parque implements Actividad {
         }
         carreraGomones.cerrar();
         snorkel.cerrar();
+        nadoDelfines.cerrar();
         abierto = false;
     }
 

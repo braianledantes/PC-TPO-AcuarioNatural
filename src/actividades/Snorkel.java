@@ -83,7 +83,7 @@ public class Snorkel implements Actividad {
             patasRana.acquire(2);
             snorkel.acquire();
             System.out.println(Thread.currentThread().getName() + " entregando el equipo a un visitante...");
-            Thread.sleep(Reloj.DURACION_HORA / 4);
+            Thread.sleep(Reloj.DURACION_HORA / 4); // nada 15 minutos
             adquirirEquipo.release();
         } catch (InterruptedException e) {
             e.printStackTrace();

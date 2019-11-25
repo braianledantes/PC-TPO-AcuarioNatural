@@ -1,10 +1,8 @@
 package hilos;
 
-import actividades.CarreraGomones;
-import actividades.FaroMirador;
-import actividades.Restaurante;
-import actividades.Snorkel;
+import actividades.*;
 import cosas.Gomon;
+import cosas.Pileta;
 import parque.Parque;
 
 import java.util.Random;
@@ -43,7 +41,8 @@ public class Visitante implements Runnable {
                 //siguienteRestaurante();
                 //merendar();
                 //visitarCarreraGomones();
-                visitarSnorkel();
+                //visitarSnorkel();
+                vistarNadoDelfines();
                 parque.salir();
             }
             //i++;
@@ -60,8 +59,19 @@ public class Visitante implements Runnable {
         }
     }
 
+    void vistarNadoDelfines() {
+        NadoDelfines nadoDelfines = parque.getNadoDelfines();
+        if (nadoDelfines != null && nadoDelfines.entrar()) {
+            Pileta pileta = nadoDelfines.entrarAPileta();
+            pileta.esperarAQueInicie();
+            pileta.nadarConDelfines();
+            pileta.salir();
+            nadoDelfines.salir();
+        }
+    }
+
     void visitarSnorkel() {
-        Snorkel snorkel = parque.entrarSnorkel();
+        Snorkel snorkel = parque.getSnorkel();
         if (snorkel != null && snorkel.entrar()) {
             snorkel.adquirirEquipo();
             snorkel.nadar();
@@ -70,7 +80,7 @@ public class Visitante implements Runnable {
     }
 
     void visitarCarreraGomones() {
-        CarreraGomones carreraGomones = parque.entrarCarreraGomones();
+        CarreraGomones carreraGomones = parque.getCarreraGomones();
         if (carreraGomones != null) {
             if (carreraGomones.entrar()) {
                 carreraGomones.irAlInicio();
@@ -86,7 +96,7 @@ public class Visitante implements Runnable {
     }
 
     void visitarFaroMirador() {
-        FaroMirador faroMirador = parque.entrarAlFaroMirador();
+        FaroMirador faroMirador = parque.getFaroMirador();
         if (faroMirador != null && faroMirador.entrar()) {
             faroMirador.admirarVista();
             faroMirador.desenderPorTobogan();
@@ -95,7 +105,7 @@ public class Visitante implements Runnable {
     }
 
     void almorzar() {
-        Restaurante restaurante = parque.entrarAlRestaurante(cualRest);
+        Restaurante restaurante = parque.getRestaurante(cualRest);
         if (restaurante != null && restaurante.entrar()) {
             restaurante.almorzar(2);
             restaurante.salir();
@@ -107,7 +117,7 @@ public class Visitante implements Runnable {
     }
 
     void merendar() {
-        Restaurante restaurante = parque.entrarAlRestaurante(cualRest);
+        Restaurante restaurante = parque.getRestaurante(cualRest);
         if (restaurante != null) {
             restaurante.entrar();
             restaurante.merendar(1);
