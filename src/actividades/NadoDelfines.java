@@ -70,6 +70,29 @@ public class NadoDelfines implements Actividad {
     }
 
     /**
+     * Método que ejecuta el reloj para actualizar la actividad, se puede iniciar cuando esten todas las piletas
+     * completas me nos una.
+     */
+    public synchronized void iniciarTurno() {
+        if (sePuedeIniciar()) {
+            iniciar = true;
+            notifyAll(); // despieta al administrador de las piletas
+        }
+    }
+
+    /**
+     * Método que ejecuta el reloj.
+     * La política del parque es que en cada horario puede haber solo 1 grupo incompleto.
+     */
+    private boolean sePuedeIniciar() {
+        int cantCompeta = 0;
+        for (Pileta p : piletas) {
+            if (p.isCompleta()) cantCompeta++;
+        }
+        return cantCompeta >= piletas.length - 1;
+    }
+
+    /**
      * Método utilizado por el administrador de las piletas.
      */
     public synchronized void esperarTurno() {
@@ -80,25 +103,7 @@ public class NadoDelfines implements Actividad {
             } catch (InterruptedException ignored) {
             }
         }
-        iniciar = false;
-    }
-
-    public synchronized void iniciarTurno() {
-        if (sePuedeIniciar()) {
-            iniciar = true;
-            notifyAll(); // despieta al administrador de las piletas
-        }
-    }
-
-    /**
-     * La política del parque es que en cada horario puede haber solo 1 grupo incompleto.
-     */
-    public boolean sePuedeIniciar() {
-        int cantCompeta = 0;
-        for (Pileta p : piletas) {
-            if (p.isCompleta()) cantCompeta++;
-        }
-        return cantCompeta >= piletas.length - 1;
+        iniciar = false; // para que vuelva a esperar en la proxima iteracion
     }
 
     @Override
