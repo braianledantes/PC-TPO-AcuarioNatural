@@ -100,10 +100,7 @@ public class CarreraGomones implements Actividad {
                 enPrecompetencia++;
             }
             precompetencia.await(2 * Reloj.DURACION_HORA, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            //e.printStackTrace();
-        } catch (BrokenBarrierException e) {
-            //e.printStackTrace();
+        } catch (InterruptedException | BrokenBarrierException ignored) {
         } catch (TimeoutException e) {
             precompetencia.reset();
         } finally {
@@ -166,8 +163,7 @@ public class CarreraGomones implements Actividad {
         try {
             //System.out.println(Thread.currentThread().getName() + " esperando para competir... ");
             largada.await();
-        } catch (InterruptedException e) {
-        } catch (BrokenBarrierException e) {
+        } catch (InterruptedException | BrokenBarrierException ignored) {
         }
         synchronized (this) {
             // si es el primero en salir, la camioneta lleva los bolsos

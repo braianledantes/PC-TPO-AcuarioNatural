@@ -16,10 +16,6 @@ public class Restaurante implements Actividad {
     private String nombre;
     private int cantAct;
     private Semaphore lugares, mutex;
-    public static final int HORA_INICIO_ALMUERZO = 11;
-    public static final int HORA_FIN_ALMUERZO = 13;
-    public static final int HORA_INICIO_MERIENDA = 15;
-    public static final int HORA_FIN_MERIENDA = 17;
 
     public Restaurante(String nombre, int capacidad) {
         this.nombre = nombre;
@@ -37,7 +33,6 @@ public class Restaurante implements Actividad {
     @Override
     public boolean entrar() {
         // TODO cuando cierre el parque y hay gente en la fila los tiene que echar
-        boolean pudoEntrar = false;
         try {
             lugares.acquire();
             mutex.acquire();

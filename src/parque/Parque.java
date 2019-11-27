@@ -30,6 +30,7 @@ public class Parque implements Actividad {
     private CarreraGomones carreraGomones;
     private Snorkel snorkel;
     private NadoDelfines nadoDelfines;
+    private Tienda tienda;
     private Transporte[] colectivos;
 
 
@@ -45,12 +46,12 @@ public class Parque implements Actividad {
         }
         this.colectivos = new Transporte[2];
         for (int i = 0; i < colectivos.length; i++) {
-            colectivos[i] = new Transporte("Colectivo" + i,8, 2);
+            colectivos[i] = new Transporte("Colectivo" + i, 8, 2);
             colectivos[i].start();
         }
         faroMirador = new FaroMirador(5, 10);
         carreraGomones = new CarreraGomones(5, 3, 15);
-        snorkel = new Snorkel(6,6,12);
+        snorkel = new Snorkel(6, 6, 12);
         nadoDelfines = new NadoDelfines(4, 10);
     }
 
@@ -59,18 +60,16 @@ public class Parque implements Actividad {
     }
 
     public synchronized void abrir() {
-        // TODO abrir todas las actividades
-        for (Restaurante r : restaurantes) {
+        for (Restaurante r : restaurantes)
             r.abrir();
-        }
         faroMirador.abrir();
         carreraGomones.abrir();
         snorkel.abrir();
         nadoDelfines.abrir();
+        tienda.abrir();
         abierto = true;
-        for (Transporte colectivo : colectivos) {
+        for (Transporte colectivo : colectivos)
             colectivo.abrir();
-        }
     }
 
     public boolean tomarCole() {
@@ -88,8 +87,15 @@ public class Parque implements Actividad {
 
     public boolean entrar() {
         // TODO implementar
-       // System.out.println(Thread.currentThread().getName() + " entro al parque");
+        // System.out.println(Thread.currentThread().getName() + " entro al parque");
         return true;
+    }
+
+    public Tienda getTienda() {
+        Tienda tienda = null;
+        if (this.tienda.isAbierto())
+            tienda = this.tienda;
+        return tienda;
     }
 
     public Restaurante getRestaurante(int r) {
@@ -101,33 +107,29 @@ public class Parque implements Actividad {
 
     public FaroMirador getFaroMirador() {
         FaroMirador retorno = null;
-        if (faroMirador.isAbierto()) {
+        if (faroMirador.isAbierto())
             retorno = faroMirador;
-        }
         return retorno;
     }
 
     public CarreraGomones getCarreraGomones() {
         CarreraGomones carrera = null;
-        if (faroMirador.isAbierto()) {
+        if (faroMirador.isAbierto())
             carrera = carreraGomones;
-        }
         return carrera;
     }
 
     public Snorkel getSnorkel() {
         Snorkel s = null;
-        if (snorkel.isAbierto()) {
+        if (snorkel.isAbierto())
             s = snorkel;
-        }
         return s;
     }
 
     public NadoDelfines getNadoDelfines() {
         NadoDelfines nd = null;
-        if (nadoDelfines.isAbierto()) {
+        if (nadoDelfines.isAbierto())
             nd = nadoDelfines;
-        }
         return nd;
     }
 
@@ -138,17 +140,15 @@ public class Parque implements Actividad {
     }
 
     public synchronized void cerrarIngreso() {
-        // TODO cerrar todas las actividades
-        for (Restaurante r : restaurantes) {
+        for (Transporte colectivo : colectivos)
+            colectivo.cerrar();
+        for (Restaurante r : restaurantes)
             r.cerrar();
-        }
         faroMirador.cerrar();
-        for (int i = 0; i < colectivos.length; i++) {
-            colectivos[i].cerrar();
-        }
         carreraGomones.cerrar();
         snorkel.cerrar();
         nadoDelfines.cerrar();
+        tienda.cerrar();
         abierto = false;
     }
 

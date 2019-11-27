@@ -2,13 +2,13 @@ package actividades;
 
 public interface Actividad {
 
-    public void abrir();
+    void abrir();
 
-    public boolean entrar();
+    boolean entrar();
 
-    public void salir();
+    void salir();
 
-    public void cerrar();
+    void cerrar();
 
-    public boolean isAbierto();
+    boolean isAbierto();
 }

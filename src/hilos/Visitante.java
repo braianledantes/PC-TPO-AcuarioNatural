@@ -59,6 +59,15 @@ public class Visitante implements Runnable {
         }
     }
 
+    void visitarTienda() {
+        Tienda tienda = parque.getTienda();
+        if (tienda != null && tienda.entrar()){
+            tienda.comprar();
+            tienda.pagar(random.nextInt(tienda.getCantCajas()));
+            tienda.salir();
+        }
+    }
+
     void vistarNadoDelfines() {
         NadoDelfines nadoDelfines = parque.getNadoDelfines();
         if (nadoDelfines != null && nadoDelfines.entrar()) {

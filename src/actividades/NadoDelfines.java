@@ -7,7 +7,6 @@ import hilos.Reloj;
 import java.util.concurrent.Semaphore;
 
 /**
- * TODO terminar clase
  * Nado con delfines: para realizarla se dispone de 4 piletas. Es necesario que el visitante elija un
  * horario para realizar la actividad entre los horarios preestablecidos de la misma. Se conforman grupos
  * de 10 personas por pileta. En cada pileta nadaran dos delfines y la actividad dura aproximadamente
@@ -16,7 +15,6 @@ import java.util.concurrent.Semaphore;
  */
 public class NadoDelfines implements Actividad {
     private AdminNadoDelfines admin;
-    private Semaphore entrar;
     private int duracionTurno, cantAct, capacidad;
     private Pileta[] piletas;
     private boolean abierto, iniciar;
@@ -24,11 +22,10 @@ public class NadoDelfines implements Actividad {
     public NadoDelfines(int cantPiletas, int capacidadPiletas) {
         this.capacidad = cantPiletas * capacidadPiletas;
         this.cantAct = 0;
-        this.entrar = new Semaphore(capacidad, true);
         this.duracionTurno = Reloj.DURACION_HORA * 3 / 4; // 45 minutos
         this.piletas = new Pileta[cantPiletas];
         for (int i = 0; i < piletas.length; i++) {
-            piletas[i] = new Pileta(this, capacidadPiletas);
+            piletas[i] = new Pileta(capacidadPiletas);
         }
         this.iniciar = false;
         admin = new AdminNadoDelfines("AdminPiletas", this);

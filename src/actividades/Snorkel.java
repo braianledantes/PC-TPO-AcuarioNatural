@@ -6,7 +6,6 @@ import hilos.Reloj;
 import java.util.concurrent.Semaphore;
 
 /**
- * TODO hacer la actividad Snorkel
  * Disfruta de Snorkel ilimitado : existe la posibilidad de realizar snorkel en una laguna, para lo cual es
  * necesario adquirir previamente el equipo de snorkel, salvavidas y patas de ranas, que deberán ser
  * devueltos al momento de finalizar la actividad. En el ingreso a la actividad hay un stand donde dos

@@ -1,25 +1,18 @@
 package cosas;
 
 import actividades.NadoDelfines;
-import hilos.Reloj;
-import parque.Parque;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Pileta {
-
     private int capacidad, cantAct;
     private boolean entrar, inicio, termino;
-
-    private NadoDelfines actividad;
-
     private Lock lock;
     private Condition nadar, salir;
 
-    public Pileta(NadoDelfines nadoDelfines, int capacidad) {
-        this.actividad = nadoDelfines;
+    public Pileta(int capacidad) {
         this.capacidad = capacidad;
         entrar = true;
         inicio = false;
