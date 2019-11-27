@@ -76,10 +76,9 @@ public class FaroMirador implements Actividad {
 
             if (pudoEntrar) {
                 System.out.println(Thread.currentThread().getName() + " subiendo escalera");
-                Reloj.dormirHilo(1,0);
+                Thread.sleep(Reloj.DURACION_MIN * 10);
             }
-        } catch (InterruptedException ie) {
-            ie.printStackTrace();
+        } catch (InterruptedException ignored) {
         }
         return pudoEntrar;
     }
@@ -99,9 +98,8 @@ public class FaroMirador implements Actividad {
             subir.signal();
             lock.unlock();
             System.out.println(Thread.currentThread().getName() + " admirando vista");
-            Reloj.dormirHilo(1,0);
-        } catch (InterruptedException ie) {
-            ie.printStackTrace();
+            Thread.sleep(Reloj.DURACION_MIN * 15);
+        } catch (InterruptedException ignored) {
         }
     }
 
@@ -141,8 +139,8 @@ public class FaroMirador implements Actividad {
             }
             lock.unlock();
 
-            System.out.println(Thread.currentThread().getName() + " desendiendo por tobogan " + cualTobogan);
-            Thread.sleep(1000);
+            System.out.println(Thread.currentThread().getName() + " desendiendo por tobogan " + cualTobogan + "...");
+            Thread.sleep(Reloj.DURACION_MIN * 3); // 3 minutos en desender
             System.out.println(Thread.currentThread().getName() + " salio por tobogan " + cualTobogan);
 
             // libera el tobogan y le dice al admin que ya se tiro
@@ -154,8 +152,7 @@ public class FaroMirador implements Actividad {
             }
             administrar.signal();
             lock.unlock();
-        } catch (InterruptedException ie) {
-            ie.printStackTrace();
+        } catch (InterruptedException ignored) {
         }
     }
 
@@ -163,21 +160,23 @@ public class FaroMirador implements Actividad {
      * Método utilizado por el arministrador de los toboganes.
      * El admin espera mientras nadie se quiera tirar o ningún tobogán esté disponible.
      * Luego le indica al visitante por cual tobogán tirarse.
-     * @throws InterruptedException
      */
-    public void administrar() throws InterruptedException {
+    public void administrar() {
         lock.lock();
-        while (quieren_tirarse == 0 || (!disponibleToboganA && !disponibleToboganB)) {
-            administrar.await();
+        try {
+            while (quieren_tirarse == 0 || (!disponibleToboganA && !disponibleToboganB)) {
+                administrar.await();
+            }
+            if (disponibleToboganA) {
+                queTobogan = 1;
+            } else {
+                queTobogan = 2;
+            }
+            tirarse.signal();
+        } catch (InterruptedException ignored){
+        } finally {
+            lock.unlock();
         }
-
-        if (disponibleToboganA) {
-            queTobogan = 1;
-        } else if (disponibleToboganB) {
-            queTobogan = 2;
-        }
-        tirarse.signal();
-        lock.unlock();
     }
 
     @Override

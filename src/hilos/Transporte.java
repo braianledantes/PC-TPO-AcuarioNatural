@@ -48,8 +48,7 @@ public class Transporte extends Thread {
             while (!abierto) {
                 wait();
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
         }
     }
 
@@ -64,8 +63,7 @@ public class Transporte extends Thread {
             mutex.release();
             arrancarTren.acquire(); // se traba hasta que llegue el primer pasajero
             irDestino.await(5, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
         }
     }
 
@@ -84,8 +82,7 @@ public class Transporte extends Thread {
                 System.out.println(Thread.currentThread().getName() + " se subio al " + getName());
                 irDestino.countDown();
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
         }
         return subirse;
     }
@@ -97,10 +94,9 @@ public class Transporte extends Thread {
             System.out.println(getName() + " viajando con " + cantAct + " pasajeros...");
             mutex.release();
 
-            Reloj.dormirHilo(tiempoViaje, tiempoViaje + 1);
+            Reloj.dormirHilo(tiempoViaje, tiempoViaje * 3 / 2);
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
         }
     }
 
@@ -111,8 +107,7 @@ public class Transporte extends Thread {
             bajarse.release(cantAct); // libero los pasajeros para que se bajen
             System.out.println(getName() + " llegó a destino");
             mutex.release();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
         }
     }
 
@@ -124,8 +119,7 @@ public class Transporte extends Thread {
             System.out.println(Thread.currentThread().getName() + " se bajo del " + getName());
             volverParada.countDown();
             mutex.release();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
         }
     }
 
@@ -133,9 +127,8 @@ public class Transporte extends Thread {
         try {
             volverParada.await(); // tren quiere irse
             System.out.println(getName() + " volviendo...");
-            Reloj.dormirHilo(tiempoViaje, tiempoViaje + 1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            Reloj.dormirHilo(tiempoViaje, tiempoViaje * 3 / 2);
+        } catch (InterruptedException ignored) {
         }
     }
 }

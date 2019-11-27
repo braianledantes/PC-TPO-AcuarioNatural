@@ -1,10 +1,12 @@
 package parque;
 
 import actividades.*;
+import hilos.Reloj;
 import hilos.Transporte;
 
+import java.util.concurrent.Semaphore;
+
 /**
- * TODO terminar las otras actividades y terminar el parque
  * Se desea simular el funcionamiento del parque ecológico “ECO-PCS”, un acuario natural, desde que los
  * visitantes llegan al parque hasta que se van.
  * Al parque se puede acceder en forma particular o por tour, en el caso del tour, se trasladan a través de
@@ -23,8 +25,9 @@ public class Parque implements Actividad {
     public static final int HORA_INICIO_INGRESO = 9;
     public static final int HORA_FIN_INGRESO = 17;
     public static final int HORA_CIERRE = 18;
+    public static final int CANTIDAD_ACTIDIDADES = 5;
     private boolean abierto;
-    private int molinetes;
+    private Semaphore molinetes;
     private Restaurante[] restaurantes;
     private FaroMirador faroMirador;
     private CarreraGomones carreraGomones;
@@ -35,24 +38,25 @@ public class Parque implements Actividad {
 
 
     public Parque(int molinetes) {
-        this.molinetes = molinetes;
+        this.molinetes = new Semaphore(molinetes, true);
         this.abierto = false;
         this.restaurantes = new Restaurante[CANT_RESTUARANTES];
 
         String[] nombresRestaurantes = {"Gusto Restaurant", "Morfi", "Macdonals"};
-
         for (int i = 0; i < restaurantes.length; i++) {
             restaurantes[i] = new Restaurante(nombresRestaurantes[i], 10);
-        }
-        this.colectivos = new Transporte[2];
-        for (int i = 0; i < colectivos.length; i++) {
-            colectivos[i] = new Transporte("Colectivo" + i, 8, 2);
-            colectivos[i].start();
         }
         faroMirador = new FaroMirador(5, 10);
         carreraGomones = new CarreraGomones(5, 3, 15);
         snorkel = new Snorkel(6, 6, 12);
         nadoDelfines = new NadoDelfines(4, 10);
+        tienda = new Tienda(2);
+
+        this.colectivos = new Transporte[2];
+        for (int i = 0; i < colectivos.length; i++) {
+            colectivos[i] = new Transporte("Colectivo" + i, 8, 2 * Reloj.DURACION_HORA);
+            colectivos[i].start();
+        }
     }
 
     public synchronized void actualizarActividades() {
@@ -77,17 +81,21 @@ public class Parque implements Actividad {
         int i = 0;
         while (!tomoUno && i < colectivos.length) {
             tomoUno = colectivos[i].subirse();
-            if (tomoUno) {
+            if (tomoUno)
                 colectivos[i].bajarse();
-            }
             i++;
         }
         return tomoUno;
     }
 
     public boolean entrar() {
-        // TODO implementar
-        // System.out.println(Thread.currentThread().getName() + " entro al parque");
+        try {
+            molinetes.acquire();
+            Thread.sleep(Reloj.DURACION_MIN * 3); // 3 min
+            System.out.println(Thread.currentThread().getName() + " entro al parque");
+            molinetes.release();
+        } catch (InterruptedException ignored) {
+        }
         return true;
     }
 
@@ -135,7 +143,6 @@ public class Parque implements Actividad {
 
     @Override
     public void salir() {
-        // TODO implementar
         System.out.println(Thread.currentThread().getName() + " salió del parque.");
     }
 

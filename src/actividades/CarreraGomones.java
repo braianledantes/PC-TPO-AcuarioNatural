@@ -34,7 +34,7 @@ public class CarreraGomones implements Actividad {
     public CarreraGomones(int cantGomonesIndividuales, int cantGomonesCompartidos, int capacidadTren) {
         this.gomones = new Gomon[cantGomonesIndividuales + cantGomonesCompartidos];
         this.cantMaxCompetidores = cantGomonesIndividuales + (cantGomonesCompartidos * 2);
-        this.tren = new Transporte("Tren", capacidadTren, 1);
+        this.tren = new Transporte("Tren", capacidadTren, Reloj.DURACION_HORA);
         this.abierto = false;
 
         this.precompetencia = new CyclicBarrier(cantMaxCompetidores);
@@ -67,6 +67,10 @@ public class CarreraGomones implements Actividad {
         System.out.println("Carrera de gomones abierto");
     }
 
+    /**
+     * Para entrar en el parque.
+     * @return true si es posivle entrar y falso de lo contrario
+     */
     @Override
     public synchronized boolean entrar() {
         return abierto;
@@ -85,7 +89,7 @@ public class CarreraGomones implements Actividad {
 
     private void irEnBici() {
         System.out.println(Thread.currentThread().getName() + " en bicicleta...");
-        Reloj.dormirHilo(5, 0);
+        Reloj.dormirHilo(Reloj.DURACION_HORA / 2, Reloj.DURACION_HORA);
     }
 
     /**
@@ -129,7 +133,7 @@ public class CarreraGomones implements Actividad {
             }
         }
         try {
-            Thread.sleep(100);
+            Thread.sleep(Reloj.DURACION_MIN * 3);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -147,7 +151,7 @@ public class CarreraGomones implements Actividad {
             i++;
         }
         try {
-            Thread.sleep(100);
+            Thread.sleep(Reloj.DURACION_MIN * 3);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -175,7 +179,7 @@ public class CarreraGomones implements Actividad {
             notifyAll();
         }
         System.out.println(Thread.currentThread().getName() + " compitiendo...");
-        Reloj.dormirHilo(3, 5);
+        Reloj.dormirHilo(Reloj.DURACION_HORA, 2 * Reloj.DURACION_HORA);
     }
 
     /**
@@ -201,7 +205,7 @@ public class CarreraGomones implements Actividad {
      */
     public void llevarBolsos() {
         System.out.println("Camioneta llevando los bolsos...");
-        Reloj.dormirHilo(2, 3);
+        Reloj.dormirHilo(Reloj.DURACION_HORA, Reloj.DURACION_HORA * 3 / 2);
         synchronized (this) {
             camionetaFin = true;
             notifyAll();
@@ -212,7 +216,7 @@ public class CarreraGomones implements Actividad {
      * Si el gomón enviado por parámetro es el ganador, lo notifica.
      * Si es el último competidor en llegar a la meta resetea el gomón ganador.
      *
-     * @param gomon
+     * @param gomon gomon con el cual se corrió la carrera
      */
     public synchronized void terminarCarrera(Gomon gomon) {
         // si es el primero guarda el gomon ganador
@@ -271,7 +275,7 @@ public class CarreraGomones implements Actividad {
      */
     public void volver() {
         System.out.println("Camioneta volviendo...");
-        Reloj.dormirHilo(2, 3);
+        Reloj.dormirHilo(Reloj.DURACION_HORA, Reloj.DURACION_HORA * 3 / 2);
         synchronized (this) {
             // les avisa que pueden dejar sus bolsos
             camionetaInicio = true;

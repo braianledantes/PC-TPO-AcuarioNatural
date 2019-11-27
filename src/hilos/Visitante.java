@@ -5,81 +5,116 @@ import cosas.Gomon;
 import cosas.Pileta;
 import parque.Parque;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Visitante implements Runnable {
     private Parque parque;
     private int cualRest;
-    private Gomon gomon;
     private Random random;
-    private int[] recorrido;
+    private ArrayList<Integer> recorrido;
+
 
     public Visitante(Parque parque) {
         this.parque = parque;
         this.random = new Random();
         this.cualRest = random.nextInt(Parque.CANT_RESTUARANTES - 1);
-        recorrido = new int[4];
-    }
-
-    public Gomon getGomon() {
-        return gomon;
-    }
-
-    public void setGomon(Gomon gomon) {
-        this.gomon = gomon;
+        recorrido = new ArrayList<>(6);
     }
 
     @Override
     public void run() {
-        //int i = 0;
         while (true) {
             if (parque.isAbierto()) {
-                //irAlParque();
+                irAlParque();
                 parque.entrar();
-                //visitarFaroMirador();
-                //almorzar();
-                //siguienteRestaurante();
-                //merendar();
-                //visitarCarreraGomones();
-                //visitarSnorkel();
-                vistarNadoDelfines();
+                if (random.nextBoolean()) {
+                    visitarActividades();
+                } else {
+                    visitarTienda();
+                }
                 parque.salir();
             }
-            //i++;
             volverDespues();
         }
     }
 
+    private void establecerRecorrido() {
+        recorrido.clear();
+        int valor;
+        int cantActividades = Parque.CANTIDAD_ACTIDIDADES + 1;
+        for (int i = 0; i < cantActividades; i++) {
+            do {
+                valor = 1 + random.nextInt(cantActividades);
+            } while (recorrido.contains(valor));
+            recorrido.add(valor);
+        }
+       // System.out.println(recorrido);
+    }
+
     /**
-     * Si no puede ir al parque en conlectivo para llegar más rápido, va a ir en auto
+     * Visita las actividades según el recorrido establecido.
      */
-    void irAlParque() {
+    public void visitarActividades() {
+        establecerRecorrido();
+        for (int r : recorrido) {
+            switch (r) {
+                case 1:
+                    almorzar();
+                    siguienteRestaurante();
+                    break;
+                case 2:
+                    merendar();
+                    siguienteRestaurante();
+                    break;
+                case 3:
+                    visitarFaroMirador();
+                    break;
+                case 4:
+                    visitarCarreraGomones();
+                    break;
+                case 5:
+                    visitarSnorkel();
+                    break;
+                case 6:
+                    vistarNadoDelfines();
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Si no puede ir al parque en conlectivo para llegar más rápido, va a ir en auto.
+     */
+    public void irAlParque() {
         if (!parque.tomarCole()) {
             tomarAuto();
         }
     }
 
-    void visitarTienda() {
+    public  void visitarTienda() {
         Tienda tienda = parque.getTienda();
-        if (tienda != null && tienda.entrar()){
+        if (tienda != null && tienda.entrar()) {
             tienda.comprar();
             tienda.pagar(random.nextInt(tienda.getCantCajas()));
             tienda.salir();
         }
     }
 
-    void vistarNadoDelfines() {
+    public void vistarNadoDelfines() {
         NadoDelfines nadoDelfines = parque.getNadoDelfines();
         if (nadoDelfines != null && nadoDelfines.entrar()) {
-            Pileta pileta = nadoDelfines.entrarAPileta();
-            pileta.esperarAQueInicie();
-            pileta.nadarConDelfines();
-            pileta.salir();
+            Pileta pileta = nadoDelfines.entrarAUnaPileta();
+            if (pileta != null) {
+                pileta.esperarAQueInicie();
+                pileta.nadarConDelfines();
+                pileta.salir();
+            }
             nadoDelfines.salir();
         }
     }
 
-    void visitarSnorkel() {
+    public void visitarSnorkel() {
         Snorkel snorkel = parque.getSnorkel();
         if (snorkel != null && snorkel.entrar()) {
             snorkel.adquirirEquipo();
@@ -88,7 +123,7 @@ public class Visitante implements Runnable {
         }
     }
 
-    void visitarCarreraGomones() {
+    public void visitarCarreraGomones() {
         CarreraGomones carreraGomones = parque.getCarreraGomones();
         if (carreraGomones != null) {
             if (carreraGomones.entrar()) {
@@ -104,7 +139,7 @@ public class Visitante implements Runnable {
         }
     }
 
-    void visitarFaroMirador() {
+    public void visitarFaroMirador() {
         FaroMirador faroMirador = parque.getFaroMirador();
         if (faroMirador != null && faroMirador.entrar()) {
             faroMirador.admirarVista();
@@ -113,7 +148,7 @@ public class Visitante implements Runnable {
         }
     }
 
-    void almorzar() {
+    public void almorzar() {
         Restaurante restaurante = parque.getRestaurante(cualRest);
         if (restaurante != null && restaurante.entrar()) {
             restaurante.almorzar(2);
@@ -121,26 +156,28 @@ public class Visitante implements Runnable {
         }
     }
 
-    void siguienteRestaurante() {
+    public void siguienteRestaurante() {
         cualRest = (cualRest + 1) % Parque.CANT_RESTUARANTES;
     }
 
-    void merendar() {
+    public void merendar() {
         Restaurante restaurante = parque.getRestaurante(cualRest);
-        if (restaurante != null) {
-            restaurante.entrar();
+        if (restaurante != null && restaurante.entrar()) {
             restaurante.merendar(1);
             restaurante.salir();
         }
     }
 
-    void tomarAuto() {
-        System.out.println(Thread.currentThread().getName() + " yendo en auto al parque");
-        Reloj.dormirHilo(2, 3);
+    public void tomarAuto() {
+        System.out.println(Thread.currentThread().getName() + " yendo en auto al parque...");
+        Reloj.dormirHilo(Reloj.DURACION_HORA, Reloj.DURACION_HORA * 3 / 2);
         System.out.println(Thread.currentThread().getName() + " llegó en auto al parque");
     }
 
-    void volverDespues() {
+    /**
+     * El visitante hace otra cosa hasta que el parque esté abierto.
+     */
+    public void volverDespues() {
         int horaSalida = Reloj.getHora();
         int horaEspera;
         if (horaSalida < Parque.HORA_INICIO_INGRESO) {
@@ -148,7 +185,10 @@ public class Visitante implements Runnable {
         } else {
             horaEspera = 24 - horaSalida + Parque.HORA_INICIO_INGRESO;
         }
-        //System.out.println(Thread.currentThread().getName() + " haciendo otra cosa por " + horaEspera + "hs");
-        Reloj.dormirHilo(horaEspera, 0);
+        try {
+            //System.out.println(Thread.currentThread().getName() + " haciendo otra cosa por " + horaEspera + "hs");
+            Thread.sleep(horaEspera * Reloj.DURACION_HORA);
+        } catch (InterruptedException ignored) {
+        }
     }
 }

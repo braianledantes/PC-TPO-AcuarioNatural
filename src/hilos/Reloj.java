@@ -5,19 +5,20 @@ import parque.Parque;
 import java.util.Random;
 
 public class Reloj extends Thread {
-    public static final int DURACION_HORA = 20000; // en milisegundos
+    public static final int DURACION_HORA = 60000; // en milisegundos
+    public static final int DURACION_MIN = DURACION_HORA / 60; // en milisegundos
     private int hora;
     private static Reloj reloj;
     private static Random random = new Random();
     private Parque parque;
 
-    private Reloj(Parque parque) {
-        this.hora = 8; // que arranque desde las 8:00 am xq no quiero esperar tanto
+    private Reloj(Parque parque, int horaInicio) {
+        this.hora = horaInicio;
         this.parque = parque;
     }
 
     public static Reloj getInstance(Parque parque) {
-        if (reloj == null) reloj = new Reloj(parque);
+        if (reloj == null) reloj = new Reloj(parque, 9);
         return reloj;
     }
 
@@ -26,26 +27,26 @@ public class Reloj extends Thread {
     }
 
     public void run() {
-        while (true) {
+        while (true){
+            System.out.println("Son las " + hora + "hs");
+            switch (reloj.hora) {
+                case Parque.HORA_INICIO_INGRESO:
+                    parque.abrir();
+                    break;
+                case Parque.HORA_FIN_INGRESO:
+                    parque.cerrarIngreso();
+                    break;
+                case Parque.HORA_CIERRE:
+                    parque.cerrar();
+                    break;
+            }
+            parque.actualizarActividades();
             try {
-                System.out.println("Son las " + hora);
                 Thread.sleep(DURACION_HORA);
-                incrementarHora();
-                switch (reloj.hora) {
-                    case Parque.HORA_INICIO_INGRESO:
-                        parque.abrir();
-                        break;
-                    case Parque.HORA_FIN_INGRESO:
-                        parque.cerrarIngreso();
-                        break;
-                    case Parque.HORA_CIERRE:
-                        parque.cerrar();
-                        break;
-                }
-                parque.actualizarActividades();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            incrementarHora();
         }
     }
 
@@ -54,17 +55,15 @@ public class Reloj extends Thread {
     }
 
     /**
-     * Duerme un hilo entre los horas enviados por parámetro,
-     * si el máximo es cero duerme las horas enviadas por minHoras
+     * Duerme un hilo entre el tiempo en milisegundos enviados por parámetro,
+     * si el máximo es cero duerme las horas enviadas por min
      */
-    public static void dormirHilo(int minHoras, int maxHoras) {
+    public static void dormirHilo(int min, int max) {
         try {
-            minHoras *= DURACION_HORA;
-            maxHoras *= DURACION_HORA;
-            if (maxHoras != 0)
-                Thread.sleep(minHoras + random.nextInt(maxHoras - minHoras));
+            if (max != 0)
+                Thread.sleep(min + random.nextInt(max - min));
             else
-                Thread.sleep(minHoras);
+                Thread.sleep(min);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

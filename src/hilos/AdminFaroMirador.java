@@ -12,11 +12,7 @@ public class AdminFaroMirador implements Runnable {
     @Override
     public void run() {
         while (true) {
-            try {
-                faroMirador.administrar();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            faroMirador.administrar();
         }
     }
 }

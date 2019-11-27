@@ -28,7 +28,7 @@ public class Tienda implements Actividad {
         }
         cajeras = new Cajera[cantCajas];
         for (int i = 0; i < cajeras.length; i++) {
-            cajeras[i] = new Cajera("C" + i, i, this);
+            cajeras[i] = new Cajera("Cajera" + i, i, this);
             cajeras[i].start();
         }
     }

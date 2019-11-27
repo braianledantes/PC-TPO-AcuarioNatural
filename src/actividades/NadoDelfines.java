@@ -4,8 +4,6 @@ import cosas.Pileta;
 import hilos.AdminNadoDelfines;
 import hilos.Reloj;
 
-import java.util.concurrent.Semaphore;
-
 /**
  * Nado con delfines: para realizarla se dispone de 4 piletas. Es necesario que el visitante elija un
  * horario para realizar la actividad entre los horarios preestablecidos de la misma. Se conforman grupos
@@ -50,8 +48,7 @@ public class NadoDelfines implements Actividad {
         while (abierto && cantAct == capacidad) {
             try {
                 wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException ignored) {
             }
         }
         if (abierto) cantAct++;
@@ -59,7 +56,7 @@ public class NadoDelfines implements Actividad {
         return abierto;
     }
 
-    public Pileta entrarAPileta() {
+    public Pileta entrarAUnaPileta() {
         Pileta p = null;
         boolean entro;
         int i = 0;
@@ -77,10 +74,9 @@ public class NadoDelfines implements Actividad {
     public synchronized void esperarTurno() {
         while (!iniciar) {
             try {
-                System.err.println(Thread.currentThread().getName() + " esperando turno...");
+                System.out.println(Thread.currentThread().getName() + " esperando turno...");
                 wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException ignored) {
             }
         }
         iniciar = false;
@@ -95,8 +91,6 @@ public class NadoDelfines implements Actividad {
 
     /**
      * La política del parque es que en cada horario puede haber solo 1 grupo incompleto.
-     *
-     * @return
      */
     public boolean sePuedeIniciar() {
         int cantCompeta = 0;
