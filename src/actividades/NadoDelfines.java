@@ -19,7 +19,7 @@ public class NadoDelfines implements Actividad {
     public NadoDelfines(int cantPiletas, int capacidadPiletas) {
         this.capacidad = cantPiletas * capacidadPiletas;
         this.cantAct = 0;
-        this.duracionTurno = Reloj.DURACION_HORA * 3 / 4; // 45 minutos
+        this.duracionTurno = Reloj.DURACION_MIN * 45; // 45 minutos
         this.piletas = new Pileta[cantPiletas];
         for (int i = 0; i < piletas.length; i++) {
             piletas[i] = new Pileta(capacidadPiletas);
@@ -50,8 +50,10 @@ public class NadoDelfines implements Actividad {
             } catch (InterruptedException ignored) {
             }
         }
-        if (abierto) cantAct++;
-        System.out.println(Thread.currentThread().getName() + " entró a NadoDelfines");
+        if (abierto) {
+            cantAct++;
+            System.out.println(Thread.currentThread().getName() + " entró a NadoDelfines");
+        }
         return abierto;
     }
 
@@ -73,7 +75,7 @@ public class NadoDelfines implements Actividad {
     public synchronized void esperarTurno() {
         while (!iniciar) {
             try {
-                System.out.println(Thread.currentThread().getName() + " esperando turno...");
+                System.err.println(Thread.currentThread().getName() + " esperando turno...");
                 wait();
             } catch (InterruptedException ignored) {
             }

@@ -17,7 +17,7 @@ public class AdminNadoDelfines extends Thread {
     public void run() {
         while (true){
             nadoDelfines.esperarTurno();
-            System.out.println(getName() + " abriendo las piletas");
+            System.err.println(getName() + " abriendo las piletas");
             for (Pileta p : piletas) {
                 p.iniciar();
             }
@@ -25,7 +25,7 @@ public class AdminNadoDelfines extends Thread {
                 Thread.sleep(nadoDelfines.getDuracionTurno());
             } catch (InterruptedException ignored) {
             }
-            System.out.println(getName() + " cerrando las piletas");
+            System.err.println(getName() + " cerrando las piletas");
             for (Pileta p : piletas) {
                 p.terminar();
             }

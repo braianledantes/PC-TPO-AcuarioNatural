@@ -49,7 +49,7 @@ public class Visitante implements Runnable {
             } while (recorrido.contains(valor));
             recorrido.add(valor);
         }
-       // System.out.println(recorrido);
+        // System.out.println(recorrido);
     }
 
     /**
@@ -92,7 +92,7 @@ public class Visitante implements Runnable {
         }
     }
 
-    public  void visitarTienda() {
+    public void visitarTienda() {
         Tienda tienda = parque.getTienda();
         if (tienda != null && tienda.entrar()) {
             tienda.comprar();
@@ -105,11 +105,9 @@ public class Visitante implements Runnable {
         NadoDelfines nadoDelfines = parque.getNadoDelfines();
         if (nadoDelfines != null && nadoDelfines.entrar()) {
             Pileta pileta = nadoDelfines.entrarAUnaPileta();
-            if (pileta != null) {
-                pileta.esperarAQueInicie();
-                pileta.nadarConDelfines();
-                pileta.salir();
-            }
+            pileta.esperarAQueInicie();
+            pileta.nadarConDelfines();
+            pileta.salir();
             nadoDelfines.salir();
         }
     }
