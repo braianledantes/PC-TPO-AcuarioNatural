@@ -21,8 +21,4 @@ public class Gomon {
             ocupados--;
         }
     }
-
-    public boolean estaLleno(){
-        return ocupados == capacidad;
-    }
 }

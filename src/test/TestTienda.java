@@ -1,7 +1,6 @@
 package test;
 
 import actividades.Tienda;
-import hilos.Visitante;
 
 import java.util.Random;
 
@@ -11,14 +10,11 @@ public class TestTienda {
         Random random = new Random(System.currentTimeMillis());
         Thread[] visitantes = new Thread[10];
         for (int i = 0; i < visitantes.length; i++) {
-            visitantes[i] = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    tienda.entrar();
-                    tienda.comprar();
-                    tienda.pagar(random.nextInt(tienda.getCantCajas()));
-                    tienda.salir();
-                }
+            visitantes[i] = new Thread(() -> {
+                tienda.entrar();
+                tienda.comprar();
+                tienda.pagar(random.nextInt(tienda.getCantCajas()));
+                tienda.salir();
             }, "V" + i);
             visitantes[i].start();
         }

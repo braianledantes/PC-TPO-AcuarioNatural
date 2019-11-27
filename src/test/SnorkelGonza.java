@@ -8,7 +8,6 @@ public class SnorkelGonza {
     private Lock lock;
     private Condition administrador;
     private Condition visitante;
-    private Thread asistentes[];
     private int cantEquipos;
     private int genteEsperando;
     private int entregado;
@@ -20,14 +19,11 @@ public class SnorkelGonza {
         lock = new ReentrantLock(true);
         administrador = lock.newCondition();
         visitante = lock.newCondition();
-        asistentes = new Thread[cantAsistentes];
+        Thread[] asistentes = new Thread[cantAsistentes];
         for (int i = 0; i < asistentes.length; i++) {
-            asistentes[i] = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (true)
-                        entregarEquipos();
-                }
+            asistentes[i] = new Thread(() -> {
+                while (true)
+                    entregarEquipos();
             }, "Asistente" + i);
             asistentes[i].start();
         }

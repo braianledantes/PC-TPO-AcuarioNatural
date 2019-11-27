@@ -15,7 +15,6 @@ import java.util.concurrent.Semaphore;
 public class Snorkel implements Actividad {
     private Semaphore snorkel, salvavidas, patasRana, adquirirEquipo, entregarEquipo, mutex;
     private boolean abierto;
-    private Thread[] asistentes;
 
     public Snorkel(int cantSnorkel, int cantSalvavidas, int cantPatasRana) {
         mutex = new Semaphore(1);
@@ -25,7 +24,7 @@ public class Snorkel implements Actividad {
         adquirirEquipo = new Semaphore(0, true);
         entregarEquipo = new Semaphore(0, true);
         abierto = false;
-        asistentes = new Thread[2];
+        Thread[] asistentes = new Thread[2];
         // se crean los asistentes
         for (int i = 0; i < asistentes.length; i++) {
             asistentes[i] = new Thread(new AsistenteSnorkel(this), "Asistente" + (i + 1));

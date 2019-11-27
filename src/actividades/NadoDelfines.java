@@ -12,7 +12,6 @@ import hilos.Reloj;
  * las 4 piletas)
  */
 public class NadoDelfines implements Actividad {
-    private AdminNadoDelfines admin;
     private int duracionTurno, cantAct, capacidad;
     private Pileta[] piletas;
     private boolean abierto, iniciar;
@@ -26,7 +25,7 @@ public class NadoDelfines implements Actividad {
             piletas[i] = new Pileta(capacidadPiletas);
         }
         this.iniciar = false;
-        admin = new AdminNadoDelfines("AdminPiletas", this);
+        AdminNadoDelfines admin = new AdminNadoDelfines("AdminPiletas", this);
         admin.start();
     }
 

@@ -22,7 +22,6 @@ public class FaroMirador implements Actividad {
     private boolean disponibleToboganA, disponibleToboganB;
     private Lock lock;
     private Condition subir, mirar, tirarse, administrar, toboganA, toboganB;
-    private Thread admin;
 
     public FaroMirador(int capacidadEscalera, int capacidadMirador) {
         this.abierto = false;
@@ -43,7 +42,7 @@ public class FaroMirador implements Actividad {
         disponibleToboganA = true;
         disponibleToboganB = true;
 
-        admin = new Thread(new AdminFaroMirador(this), "adminFaroMirador");
+        Thread admin = new Thread(new AdminFaroMirador(this), "adminFaroMirador");
         admin.start();
     }
 

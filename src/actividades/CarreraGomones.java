@@ -27,7 +27,6 @@ public class CarreraGomones implements Actividad {
     private Gomon[] gomones;
     private boolean abierto, camionetaFin, camionetaInicio, compitiendo;
     private CyclicBarrier precompetencia, largada;
-    private Camioneta camioneta;
     private Gomon gomonGanador;
     private int enCompetencia, cantMaxCompetidores, enPrecompetencia;
 
@@ -38,7 +37,7 @@ public class CarreraGomones implements Actividad {
         this.abierto = false;
 
         this.precompetencia = new CyclicBarrier(cantMaxCompetidores);
-        this.camioneta = new Camioneta(this);
+        Camioneta camioneta = new Camioneta(this);
 
         this.gomonGanador = null;
         this.camionetaInicio = true;
@@ -57,7 +56,7 @@ public class CarreraGomones implements Actividad {
         }
 
         this.tren.start();
-        this.camioneta.start();
+        camioneta.start();
     }
 
     @Override
