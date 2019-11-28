@@ -63,7 +63,7 @@ public class Snorkel implements Actividad {
     public void adquirirEquipo() {
         try {
             //System.out.println(Thread.currentThread().getName() + " esperando por obtener el equipo...");
-            entregarEquipo.release();
+            entregarEquipo.release(); // para decirle al admin que le entrege un equipo
             adquirirEquipo.acquire();
             System.out.println(Thread.currentThread().getName() + " obtuvo el equipo");
         } catch (InterruptedException e) {

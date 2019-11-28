@@ -2,7 +2,7 @@ package test;
 
 import actividades.FaroMirador;
 
-public class Test_FaroMirador {
+public class TestFaroMirador {
     public static void main(String[] args) {
         Thread[] visitantes = new Thread[7];
         FaroMirador faroMirador = new FaroMirador(5, 7);

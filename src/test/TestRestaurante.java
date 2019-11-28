@@ -10,10 +10,10 @@ public class TestRestaurante {
         int molinetes = 4, nVisitantes = 40;
         Parque parque = new Parque(molinetes);
         Reloj.getInstance(parque).start(); // inicio el reloj
-        Thread[] visitantes = new Thread[nVisitantes];
+        Visitante[] visitantes = new Visitante[nVisitantes];
 
         for (int i = 0; i < visitantes.length; i++) {
-            visitantes[i] = new Thread(new Visitante(parque) {
+            visitantes[i] = new Visitante( "V" + i, parque) {
                 @Override
                 public void run() {
                     if (parque.isAbierto()) {
@@ -24,7 +24,7 @@ public class TestRestaurante {
                         parque.salir();
                     }
                 }
-            }, "V" + i);
+            };
             visitantes[i].start();
         }
     }

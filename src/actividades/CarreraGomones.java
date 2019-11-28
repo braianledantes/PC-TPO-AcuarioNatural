@@ -4,6 +4,7 @@ import cosas.Gomon;
 import hilos.Camioneta;
 import hilos.Reloj;
 import hilos.Transporte;
+import hilos.Visitante;
 
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
@@ -113,8 +114,25 @@ public class CarreraGomones implements Actividad {
                     // se van todos de precompetencia
                     enPrecompetencia = 0;
                     compitiendo = true;
+                    notifyAll();
                 }
-                notifyAll();
+            }
+        }
+    }
+
+    /**
+     * Método utilizado por la camioneta.
+     * Espera a que todos los competidores dejen los bolsos.
+     */
+    public synchronized void esperarQueDejenBolsos() {
+        System.out.println("Camioneta en inicio");
+        compitiendo = false;
+        notifyAll();
+        while (camionetaInicio) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -141,12 +159,11 @@ public class CarreraGomones implements Actividad {
 
     /**
      * El competidor se sube a un gomón que esté disponible, no importa si es indiviual o compartido.
-     *
      * @return retorna el gomon al que se subio el visitante
      */
-    public Gomon subirseAGomon() {
+    public Gomon subirseAGomon(Visitante visitante) {
         int i = 0;
-        while (i < gomones.length && !gomones[i].subir()) {
+        while (i < gomones.length && !gomones[i].subir(visitante)) {
             i++;
         }
         try {
@@ -161,8 +178,9 @@ public class CarreraGomones implements Actividad {
     /**
      * Cuando esten todos o no venga nadie mas se larga la carrera y el primero en salir libera la camioneta
      * para que lleve los bolsos.
+     * @param gomon
      */
-    public void competir() {
+    public void competir(Gomon gomon) {
         try {
             //System.out.println(Thread.currentThread().getName() + " esperando para competir... ");
             largada.await();
@@ -177,25 +195,7 @@ public class CarreraGomones implements Actividad {
             }
             notifyAll();
         }
-        System.out.println(Thread.currentThread().getName() + " compitiendo...");
-        Reloj.dormirHilo(Reloj.DURACION_HORA, 2 * Reloj.DURACION_HORA);
-    }
-
-    /**
-     * Método utilizado por la camioneta.
-     * Espera a que todos los competidores dejen los bolsos.
-     */
-    public synchronized void esperarQueDejenBolsos() {
-        System.out.println("Camioneta en inicio");
-        compitiendo = false;
-        notifyAll();
-        while (camionetaInicio) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        gomon.correr();
     }
 
     /**
@@ -222,9 +222,9 @@ public class CarreraGomones implements Actividad {
         if (gomonGanador == null) {
             gomonGanador = gomon;
         }
-        System.out.println(Thread.currentThread().getName() + " llegó al final");
+        gomon.llegoAlFinal();
         if (gomonGanador == gomon) {
-            System.out.println(Thread.currentThread().getName() + " Ganó");
+            gomon.gano();
         }
         gomon.bajarse();
         enCompetencia--;

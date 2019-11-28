@@ -7,10 +7,10 @@ public class Main {
         int molinetes = 4, nVisitantes = 70;
         Parque parque = new Parque(molinetes);
         Reloj.getInstance(parque).start(); // inicio el reloj
-        Thread[] visitantes = new Thread[nVisitantes];
+        Visitante[] visitantes = new Visitante[nVisitantes];
 
         for (int i = 0; i < visitantes.length; i++) {
-            visitantes[i] = new Thread(new Visitante(parque), "V" + i);
+            visitantes[i] = new Visitante("V" + i, parque);
             visitantes[i].start();
         }
     }

@@ -98,7 +98,7 @@ public class NadoDelfines implements Actividad {
     public synchronized void esperarTurno() {
         while (!iniciar) {
             try {
-                System.err.println(Thread.currentThread().getName() + " esperando turno...");
+                System.out.println(Thread.currentThread().getName() + " esperando turno...");
                 wait();
             } catch (InterruptedException ignored) {
             }

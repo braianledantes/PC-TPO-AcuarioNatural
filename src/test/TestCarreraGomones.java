@@ -1,12 +1,14 @@
 package test;
 
+import actividades.CarreraGomones;
+import cosas.Gomon;
 import hilos.Reloj;
 import hilos.Visitante;
 import parque.Parque;
 
-public class TestNadoDelfines {
+public class TestCarreraGomones {
     public static void main(String[] args) {
-        int molinetes = 4, nVisitantes = 45;
+        int molinetes = 4, nVisitantes = 5;
         Parque parque = new Parque(molinetes);
         parque.abrir();
         Reloj.getInstance(parque).start(); // inicio el reloj
@@ -16,18 +18,17 @@ public class TestNadoDelfines {
             visitantes[i] = new Visitante("V" + i, parque) {
                 @Override
                 public void run() {
-                    while (true){
-                        vistarNadoDelfines();
+                  //  while (true){
+                        visitarCarreraGomones();
                         try {
                             Thread.sleep(10000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                    }
+                   // }
                 }
             };
             visitantes[i].start();
         }
     }
 }
-

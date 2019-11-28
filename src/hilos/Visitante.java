@@ -8,14 +8,15 @@ import parque.Parque;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Visitante implements Runnable {
+public class Visitante extends Thread {
     private Parque parque;
     private int cualRest;
     private Random random;
     private ArrayList<Integer> recorrido;
 
 
-    public Visitante(Parque parque) {
+    public Visitante(String name, Parque parque) {
+        super(name);
         this.parque = parque;
         this.random = new Random();
         this.cualRest = random.nextInt(Parque.CANT_RESTUARANTES - 1);
@@ -128,8 +129,8 @@ public class Visitante implements Runnable {
                 carreraGomones.irAlInicio();
                 carreraGomones.esperarEnPrecompetencia();
                 carreraGomones.dejarBolso();
-                Gomon gomon = carreraGomones.subirseAGomon();
-                carreraGomones.competir();
+                Gomon gomon = carreraGomones.subirseAGomon(this);
+                carreraGomones.competir(gomon);
                 carreraGomones.terminarCarrera(gomon);
                 carreraGomones.retirarBolso();
                 carreraGomones.salir();
