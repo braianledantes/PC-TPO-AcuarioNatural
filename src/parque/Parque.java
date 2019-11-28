@@ -59,10 +59,16 @@ public class Parque implements Actividad {
         }
     }
 
+    /**
+     * Método utilizado por el Reloj para que el parque actualize las actividades del parque.
+     */
     public synchronized void actualizarActividades() {
         nadoDelfines.iniciarTurno();
     }
 
+    /**
+     * Abre todas las actividades del parque incuyendo la tienda.
+     */
     public synchronized void abrir() {
         for (Restaurante r : restaurantes)
             r.abrir();
@@ -76,6 +82,10 @@ public class Parque implements Actividad {
             colectivo.abrir();
     }
 
+    /**
+     * El visitante intenta subirse a un colectivo si es que hay uno disponible.
+     * @return true si pudo subirse a uno, sino false
+     */
     public boolean tomarCole() {
         boolean tomoUno = false;
         int i = 0;
@@ -88,6 +98,10 @@ public class Parque implements Actividad {
         return tomoUno;
     }
 
+    /**
+     * El visitante entra por uno de los molinetes.
+     * @return true si pudo entrar (siempre)
+     */
     public boolean entrar() {
         try {
             molinetes.acquire();
@@ -99,6 +113,9 @@ public class Parque implements Actividad {
         return true;
     }
 
+    /**
+     * @return una instancia de la tienda si es que esta abierto el parque
+     */
     public Tienda getTienda() {
         Tienda tienda = null;
         if (this.tienda.isAbierto())
@@ -106,6 +123,10 @@ public class Parque implements Actividad {
         return tienda;
     }
 
+    /**
+     * @param r cual restaurante quiere entrar el visitante
+     * @return una instancia del restaurante si es que esta abierto el parque
+     */
     public Restaurante getRestaurante(int r) {
         Restaurante restaurante = null;
         if (restaurantes[r].isAbierto())
@@ -113,6 +134,9 @@ public class Parque implements Actividad {
         return restaurante;
     }
 
+    /**
+     * @return una instancia del FaroMirador si es que esta abierto el parque
+     */
     public FaroMirador getFaroMirador() {
         FaroMirador retorno = null;
         if (faroMirador.isAbierto())
@@ -120,6 +144,9 @@ public class Parque implements Actividad {
         return retorno;
     }
 
+    /**
+     * @return una instancia de CarreraGomones si es que esta abierto el parque
+     */
     public CarreraGomones getCarreraGomones() {
         CarreraGomones carrera = null;
         if (faroMirador.isAbierto())
@@ -127,6 +154,9 @@ public class Parque implements Actividad {
         return carrera;
     }
 
+    /**
+     * @return una instancia de Snorkel si es que esta abierto el parque
+     */
     public Snorkel getSnorkel() {
         Snorkel s = null;
         if (snorkel.isAbierto())
@@ -134,6 +164,9 @@ public class Parque implements Actividad {
         return s;
     }
 
+    /**
+     * @return una instancia de NadoDelfines si es que esta abierto el parque
+     */
     public NadoDelfines getNadoDelfines() {
         NadoDelfines nd = null;
         if (nadoDelfines.isAbierto())
@@ -141,11 +174,17 @@ public class Parque implements Actividad {
         return nd;
     }
 
+    /**
+     * Para que el visitante se retire del parque.
+     */
     @Override
     public void salir() {
         System.out.println(Thread.currentThread().getName() + " salió del parque.");
     }
 
+    /**
+     * Método utilizado por el Reloj para que no entre nadie más a ninguna actividad.
+     */
     public synchronized void cerrarIngreso() {
         for (Transporte colectivo : colectivos)
             colectivo.cerrar();

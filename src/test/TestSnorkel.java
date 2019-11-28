@@ -1,23 +1,34 @@
 package test;
 
+import hilos.Reloj;
+import hilos.Visitante;
+import parque.Parque;
+
 public class TestSnorkel {
-
     public static void main(String[] args) {
+        int molinetes = 4, nVisitantes = 45;
+        Parque parque = new Parque(molinetes);
+        parque.abrir();
+        Reloj.getInstance(parque).start(); // inicio el reloj
+        Thread[] visitantes = new Thread[nVisitantes];
 
-        SnorkelGonza snorkel =
-                new SnorkelGonza(10, 2);
-        Thread[] visitantes = new Thread[15];
         for (int i = 0; i < visitantes.length; i++) {
-            visitantes[i] = new Thread(new Runnable() {
+            visitantes[i] = new Visitante("V" + i, parque) {
                 @Override
                 public void run() {
-                    snorkel.pedirEquipo();
-                    snorkel.nadar();
-                    snorkel.devolver();
+                    while (true){
+                        visitarSnorkel();
+                        try {
+                            Thread.sleep(10000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
-            }, "vis" + i);
+            };
             visitantes[i].start();
         }
     }
+
 }
 

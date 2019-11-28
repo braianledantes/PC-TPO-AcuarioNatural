@@ -6,15 +6,15 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Pileta {
     private int capacidad, cantAct;
-    private boolean entrar, inicio, termino;
+    private boolean entrar, inicioActividad, terminoActividad;
     private Lock lock;
     private Condition nadar, salir;
 
     public Pileta(int capacidad) {
         this.capacidad = capacidad;
         entrar = true;
-        inicio = false;
-        termino = false;
+        inicioActividad = false;
+        terminoActividad = false;
         cantAct = 0;
         lock = new ReentrantLock(true);
         nadar = lock.newCondition();
@@ -28,8 +28,8 @@ public class Pileta {
     public void iniciar() {
         lock.lock();
         entrar = false;
-        inicio = true;
-        termino = false;
+        inicioActividad = true;
+        terminoActividad = false;
         nadar.signalAll();
         lock.unlock();
     }
@@ -56,7 +56,7 @@ public class Pileta {
         lock.lock();
         try {
             System.out.println(Thread.currentThread().getName() + " esperando que abran la pileta");
-            while (!inicio) {
+            while (!inicioActividad) {
                 nadar.await();
             }
         } catch (InterruptedException e) {
@@ -80,8 +80,8 @@ public class Pileta {
     public void terminar() {
         lock.lock();
         entrar = true;
-        inicio = false;
-        termino = true;
+        inicioActividad = false;
+        terminoActividad = true;
         salir.signalAll();
         lock.unlock();
     }
@@ -92,7 +92,7 @@ public class Pileta {
     public void salir() {
         lock.lock();
         try {
-            while (!termino) { // mientras no termino la actividad espera
+            while (!terminoActividad) { // mientras no termino la actividad espera
                 salir.await();
             }
             cantAct--;

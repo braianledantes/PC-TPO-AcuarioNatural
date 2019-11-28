@@ -1,22 +1,32 @@
 package test;
 
 import actividades.FaroMirador;
+import hilos.Reloj;
+import hilos.Visitante;
+import parque.Parque;
 
 public class TestFaroMirador {
     public static void main(String[] args) {
-        Thread[] visitantes = new Thread[7];
-        FaroMirador faroMirador = new FaroMirador(5, 7);
-        faroMirador.abrir();
+        int molinetes = 4, nVisitantes = 5;
+        Parque parque = new Parque(molinetes);
+        parque.abrir();
+        Reloj.getInstance(parque).start(); // inicio el reloj
+        Thread[] visitantes = new Thread[nVisitantes];
+
         for (int i = 0; i < visitantes.length; i++) {
-            visitantes[i] = new Thread(() -> {
-                if (faroMirador.entrar()) {
-                    faroMirador.admirarVista();
-                    faroMirador.desenderPorTobogan();
-                    faroMirador.salir();
-                } else {
-                    System.out.println("no pudo entrar");
+            visitantes[i] = new Visitante("V" + i, parque) {
+                @Override
+                public void run() {
+                    while (true) {
+                        visitarFaroMirador();
+                        try {
+                            Thread.sleep(10000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
-            }, "v" + i);
+            };
             visitantes[i].start();
         }
     }

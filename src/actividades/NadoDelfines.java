@@ -29,6 +29,10 @@ public class NadoDelfines implements Actividad {
         admin.start();
     }
 
+    /**
+     * Solo el administrador de las piletas ejecuta este método.
+     * @return el conjunto de las piletas
+     */
     public Pileta[] getPiletas() {
         return piletas;
     }
@@ -57,6 +61,10 @@ public class NadoDelfines implements Actividad {
         return abierto;
     }
 
+    /**
+     * El visitante recorre todas las piletas e intenta entrar a una.
+     * @return  la pileta a la que pudo entrar, null si no entro a ninguna
+     */
     public Pileta entrarAUnaPileta() {
         Pileta p = null;
         boolean entro;
