@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class TestTienda {
     public static void main(String[] args) {
-        int molinetes = 4, nVisitantes = 5;
+        int molinetes = 4, nVisitantes = 20;
         Parque parque = new Parque(molinetes);
         parque.abrir();
         Reloj.getInstance(parque).start(); // inicio el reloj
@@ -19,14 +19,14 @@ public class TestTienda {
             visitantes[i] = new Visitante("V" + i, parque) {
                 @Override
                 public void run() {
-                    while (true) {
+                    //while (true) {
                         visitarTienda();
                         try {
                             Thread.sleep(10000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                    }
+                    //}
                 }
             };
             visitantes[i].start();

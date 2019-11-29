@@ -178,7 +178,7 @@ public class CarreraGomones implements Actividad {
     /**
      * Cuando esten todos o no venga nadie mas se larga la carrera y el primero en salir libera la camioneta
      * para que lleve los bolsos.
-     * @param gomon
+     * @param gomon gomon con el que compite el visitante
      */
     public void competir(Gomon gomon) {
         try {

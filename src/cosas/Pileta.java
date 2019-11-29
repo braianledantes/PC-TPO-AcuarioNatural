@@ -92,7 +92,7 @@ public class Pileta {
     public void salir() {
         lock.lock();
         try {
-            while (!terminoActividad) { // mientras no termino la actividad espera
+            while (!terminoActividad) { // mientras no termino la actividad espera a que el admin notifique
                 salir.await();
             }
             cantAct--;

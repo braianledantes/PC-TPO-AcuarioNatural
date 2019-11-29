@@ -6,7 +6,7 @@ import parque.Parque;
 
 public class TestSnorkel {
     public static void main(String[] args) {
-        int molinetes = 4, nVisitantes = 45;
+        int molinetes = 4, nVisitantes = 20;
         Parque parque = new Parque(molinetes);
         parque.abrir();
         Reloj.getInstance(parque).start(); // inicio el reloj

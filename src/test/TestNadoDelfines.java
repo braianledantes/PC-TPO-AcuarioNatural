@@ -16,14 +16,14 @@ public class TestNadoDelfines {
             visitantes[i] = new Visitante("V" + i, parque) {
                 @Override
                 public void run() {
-                    while (true){
+                    //while (true){
                         vistarNadoDelfines();
                         try {
                             Thread.sleep(10000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                    }
+                   // }
                 }
             };
             visitantes[i].start();
